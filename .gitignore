@@ -1,0 +1,4 @@
+tools
+build/*.o
+build/*.img
+*.dll
