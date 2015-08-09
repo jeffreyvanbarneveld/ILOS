@@ -495,6 +495,22 @@ void execIL(int32_t method)
                 break;
             }
 
+            case IL_AND:
+        	{
+                int32_t a = stack_pop_int();
+                int32_t b = stack_pop_int();
+                stack_push_int(b & a);
+            	break;
+            }
+
+            case IL_XOR:
+            {
+                int32_t a = stack_pop_int();
+                int32_t b = stack_pop_int();
+                stack_push_int(b ^ a);
+            	break;
+            }
+
             case IL_SUB:
             {
                 uint8_t type = stack_peek_type();

@@ -72,6 +72,7 @@
 #define IL_REM 93
 #define IL_AND 95
 #define IL_OR 96
+#define IL_XOR 97
 #define IL_SHL 98
 #define IL_SHR 99
 #define IL_NEG 101

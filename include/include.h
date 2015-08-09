@@ -12,36 +12,25 @@ runtime_func* methodRefs[];
 void load()
 {
 
-	// Method System.Void TestProjectConsole.Program::testm()
-	static int methods1[] = {35,0,10,114,0,6,-1,0,-1,1,42};
-	methods[1] = methods1;
-	methodsSize[1] = 11;
-	static char* strings1[] = {"longtuberculose "};
-	strings[1] = strings1;
-	static double doubles1[] = {6.28318530717959};
-	doubles[1] = doubles1;
-	static runtime_func methodRefs1[] = {System_String_Concat2,System_Console_WriteLine1};
-	methodRefs[1] = methodRefs1;
-	localsCount[1] = 1;
 	// Method System.Void TestProjectConsole.Program::Main(System.String[])
-	static int methods0[] = {35,0,10,40,1,114,0,6,-1,0,-1,1,42};
+	static int methods0[] = {32,0,10,114,0,6,-1,0,-1,1,42};
 	methods[0] = methods0;
-	methodsSize[0] = 13;
-	static char* strings0[] = {"longtuberculose "};
+	methodsSize[0] = 11;
+	static char* strings0[] = {"t "};
 	strings[0] = strings0;
-	static double doubles0[] = {3.14159265358979};
-	doubles[0] = doubles0;
+	static int ints0[] = {240};
+	ints[0] = ints0;
 	static runtime_func methodRefs0[] = {System_String_Concat2,System_Console_WriteLine1};
 	methodRefs[0] = methodRefs0;
 	localsCount[0] = 1;
 }
 
-int* methods[2];
-size_t methodsSize[2];
-size_t localsCount[2];
-char** strings[2];
-float* floats[2];
-double* doubles[2];
-int* ints[2];
-long* longs[2];
-runtime_func* methodRefs[2];
+int* methods[1];
+size_t methodsSize[1];
+size_t localsCount[1];
+char** strings[1];
+float* floats[1];
+double* doubles[1];
+int* ints[1];
+long* longs[1];
+runtime_func* methodRefs[1];
