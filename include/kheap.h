@@ -12,7 +12,7 @@ typedef struct memory_block {
 } memory_block_t;
 
 void heap_install();
-uint32_t malloc(unsigned int size);
+void *malloc(unsigned int size);
 void free(void *ptr);
 
 #endif

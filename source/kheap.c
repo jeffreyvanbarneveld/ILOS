@@ -20,11 +20,11 @@ uintptr_t cur;
  * @param  size [description]
  * @return      [description]
  */
-uint32_t malloc(unsigned int size) 
+void *malloc(unsigned int size) 
 {
 	uintptr_t ret = cur;
 	cur += size;
-	return (uint32_t) ret;
+	return (void *)ret;
 }
 
 void free(void *ptr) 

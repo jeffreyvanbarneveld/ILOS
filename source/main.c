@@ -25,14 +25,7 @@ int32_t   stack_element_offset = 0; /* Offset from starting element */
 
 void perror(char *str)
 {
-	/*int colour = 0xFF;
-    volatile char *video = (volatile char*)0xB8000;
-    while( *str != 0 )
-    {
-        *video++ = *str++;
-        *video++ = colour;
-    }*/
-        //kprintf("perror(%s)\n", str);
+    kprintf("perror(%s)\n", str);
 }
 
 void _exit(int code)
@@ -188,7 +181,7 @@ void System_String_Concat2()
     }
 
     /* Allocate string */
-    char *str = malloc(sizeof(char) * str_size);
+    char *str = (char *)malloc(sizeof(char) * str_size);
     char *str_o = str;
 
 

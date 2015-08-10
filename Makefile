@@ -23,6 +23,7 @@ ifeq ($(OS),Windows_NT)
    Nasm = "tools/Nasm/nasm.exe"
    Linker := "tools/gcc/bin/i586-elf-ld.exe"
    gcc_cmd := "tools/gcc/bin/i586-elf-gcc.exe"
+   copy := cp build/kernel.bin E:\\
 else
    ifeq ($(shell uname), Linux)
       RM = rm -f
@@ -30,7 +31,8 @@ else
       FixPath = $1
 	  Nasm = nasm
 	  Linker = ld
-	  GCC = gcc
+	  gcc_cmd = gcc
+   	  copy = sudo cp build/kernel.bin /media/os
    endif
 endif
 
@@ -43,7 +45,7 @@ startMsg:
 kernel.elf: $(OBJ_FILES) 
 	@echo Linking kernel...
 	@$(Linker) -T link.ld $(L_FLAGS) -o build/kernel.bin $(OBJ_FILES_BUILD)
-	cp build/kernel.bin E:\
+	@$(copy)
 
 kernel.img: kernel.elf
 	@echo cleaning up...
