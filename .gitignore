@@ -8,3 +8,4 @@ include/output.h
 include/ops.h
 source/runtime.c
 source/stack.c
+source/output.c
