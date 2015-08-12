@@ -18,12 +18,15 @@ void putch(char c) ;
 void screen_writeline(char *text);
 void screen_write(char *text);
 void screen_writel(char *src, uint32_t len);
-void kprintf(const char *str, ...);
+void printf(const char *str, ...);
 void screen_write_hex(uint32_t val) ;
 void screen_write_dec(uint32_t val) ;
 
 
-
+void perror(char *str)
+{
+	printf("PERROR(%s)\n", str);
+}
 
 
 void move_cursor() {
@@ -157,7 +160,7 @@ void screen_write_double(double val) {
 	}
 }
 
-void kprintf(const char *str, ...) {
+void printf(const char *str, ...) {
 	va_list args;
 	va_start(args, str);
 	

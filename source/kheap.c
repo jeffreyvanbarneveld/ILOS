@@ -1,10 +1,9 @@
-#include <stddef.h>
 #include <stdint.h>
+#include <stdlib.h>
+#include <stdio.h>
 #include <kheap.h>
 #include <memory.h>
 #include <string.h>
-
-extern void kprintf(const char *str, ...);
 
 uintptr_t block_location;
 memory_block_t *blocks;
@@ -56,7 +55,7 @@ void *malloc(unsigned int size)
 		index++;
 	}
 
-	kprintf("HEAP OUT OF MEMORY, PANIC PANIC!!!");
+	printf("HEAP OUT OF MEMORY, PANIC PANIC!!!");
 	for (;;);
 	return 0;
 }
@@ -67,8 +66,6 @@ void free(void *ptr)
 	// Invalid pointer?
 	if (ptr == NULL)
 		return;
-
-	//kprintf("%x\n", (uint32_t)ptr);
 
 	// Calculate the address
 	uint32_t address = (uint32_t)ptr - heap_start;

@@ -1,4 +1,4 @@
-# ARM binary
+# X86 binary
 SOURCE_DIR	:= source/
 BUILD_DIR	:= build/
 
@@ -23,7 +23,6 @@ ifeq ($(OS),Windows_NT)
    Nasm = "tools/Nasm/nasm.exe"
    Linker := "tools/gcc/bin/i586-elf-ld.exe"
    gcc_cmd := "tools/gcc/bin/i586-elf-gcc.exe"
-   copy := cp build/kernel.bin E:\\
 else
    ifeq ($(shell uname), Linux)
       RM = rm -f
@@ -31,8 +30,7 @@ else
       FixPath = $1
 	  Nasm = nasm
 	  Linker = ld
-	  gcc_cmd = gcc
-   	  copy = sudo cp build/kernel.bin /media/os
+	  GCC = gcc
    endif
 endif
 
@@ -42,10 +40,18 @@ all: startMsg kernel.img
 startMsg:
 	@echo Begin compiling kernel.img
 
+sync:
+	@wget https://raw.githubusercontent.com/NielsDev/IL2VM/master/C/stack.c -O source/stack.c -q --no-check-certificate
+	@wget https://raw.githubusercontent.com/NielsDev/IL2VM/master/C/runtime.c -O source/runtime.c -q --no-check-certificate
+	@wget https://raw.githubusercontent.com/NielsDev/IL2VM/master/C/include/ops.h -O include/ops.h -q --no-check-certificate
+	@wget https://raw.githubusercontent.com/NielsDev/IL2VM/master/C/include/runtime.h -O include/runtime.h -q --no-check-certificate
+	@wget https://raw.githubusercontent.com/NielsDev/IL2VM/master/C/include/stack.h -O include/stack.h -q --no-check-certificate
+	@wget https://raw.githubusercontent.com/NielsDev/IL2VM/master/C/include/output.h -O include/output.h -q --no-check-certificate
+	
 kernel.elf: $(OBJ_FILES) 
 	@echo Linking kernel...
 	@$(Linker) -T link.ld $(L_FLAGS) -o build/kernel.bin $(OBJ_FILES_BUILD)
-	@$(copy)
+	@cp build/kernel.bin E:\
 
 kernel.img: kernel.elf
 	@echo cleaning up...

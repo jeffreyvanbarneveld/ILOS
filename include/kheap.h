@@ -1,6 +1,8 @@
 ﻿#ifndef __KHEAP_H
 #define __KHEAP_H
 
+#include <stdint.h>
+
 #define HEAP_BLOCKS         0x100
 #define HEAP_INITIAL_SIZE   16
 

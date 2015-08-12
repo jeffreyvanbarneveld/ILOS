@@ -2,5 +2,9 @@ tools
 build/*.o
 build/*.img
 *.dll
-os.img
-build/kernel.bin
+include/stack.h
+include/runtime.h
+include/output.h
+include/ops.h
+source/runtime.c
+source/stack.c

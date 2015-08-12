@@ -5,7 +5,11 @@
 #define IL_CEQ -511
 #define IL_CGT -510
 #define IL_CLT -508
+#define IL_LDARG -503
 #define IL_LDARG_0 2
+#define IL_LDARG_1 3
+#define IL_LDARG_2 4
+#define IL_LDARG_3 5
 #define IL_LDLOC_0 6
 #define IL_LDLOC_1 7
 #define IL_LDLOC_2 8
