@@ -89,8 +89,14 @@
 #define IL_CONV_R8 108
 #define IL_CONV_U4 109
 #define IL_CONV_U8 110
+#define IL_CALLVIRT 111
 #define IL_LDSTR 114
+#define IL_NEWOBJ 115
 #define IL_CONV_R_UN 118
+#define IL_LDFLD 123
+#define IL_STFLD 125
+#define IL_LDSFLD 126
+#define IL_STSFLD 128
 #define IL_CONV_U2 209
 #define IL_CONV_U1 210
 #define IL_CONV_I 211

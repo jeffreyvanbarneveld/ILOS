@@ -1,11 +1,12 @@
 tools
 build/*.o
-build/*.img
+build/*.bin
 *.dll
 include/stack.h
 include/runtime.h
 include/output.h
 include/ops.h
+include/binarystructs.h
 source/runtime.c
 source/stack.c
 source/output.c

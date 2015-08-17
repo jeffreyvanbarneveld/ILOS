@@ -12,33 +12,35 @@ OBJ_FILES 	+= $(patsubst %.c,%.o, $(C_FILES))
 OBJ_FILES_BUILD := $(patsubst source/%.o,$(BUILD_DIR)%.o, $(OBJ_FILES))
 
 # compile flags
-C_FLAGS		:=  -I./include -std=gnu99 -nostdlib -m32 -Wall -O -fstrength-reduce -fomit-frame-pointer -finline-functions -fno-builtin
+C_FLAGS		:=  -I./include -std=gnu99 -m32 -Wall -O -fno-stack-protector -finline-functions -fno-builtin
 L_FLAGS		:= -m elf_i386
 A_FLAGS		:= -f elf32
 
 ifeq ($(OS),Windows_NT)
    FixPath = $(subst /,\,$1)
-   RM = rm -f
-   DellAll = $(RM) $(OBJ_FILES_BUILD) kernel.elf
+   RM = del
+   DellAll = $(RM) build\*.o
    Nasm = "tools/Nasm/nasm.exe"
-   Linker := "tools/gcc/bin/i586-elf-ld.exe"
-   gcc_cmd := "tools/gcc/bin/i586-elf-gcc.exe"
+   Linker = "tools/gcc/bin/i586-elf-ld.exe"
+   GCC = "tools/gcc/bin/i586-elf-gcc.exe"
+   CP = copy
 else
    ifeq ($(shell uname), Linux)
       RM = rm -f
-	  DellAll = $(RM) $(OBJ_FILES_BUILD) kernel.elf
+	  DellAll = $(RM) build/*.o
       FixPath = $1
 	  Nasm = nasm
 	  Linker = ld
 	  GCC = gcc
+	  CP = cp
    endif
 endif
 
-all: startMsg kernel.img	
-	@echo Finished compiling kernel.img
+all: startMsg kernel.elf clean	
+	@echo Finished compiling kernel
 
 startMsg:
-	@echo Begin compiling kernel.img
+	@echo Begin compiling kernel
 
 sync:
 	@wget https://raw.githubusercontent.com/NielsDev/IL2VM/master/C/stack.c -O source/stack.c -q --no-check-certificate
@@ -46,26 +48,21 @@ sync:
 	@wget https://raw.githubusercontent.com/NielsDev/IL2VM/master/C/include/ops.h -O include/ops.h -q --no-check-certificate
 	@wget https://raw.githubusercontent.com/NielsDev/IL2VM/master/C/include/runtime.h -O include/runtime.h -q --no-check-certificate
 	@wget https://raw.githubusercontent.com/NielsDev/IL2VM/master/C/include/stack.h -O include/stack.h -q --no-check-certificate
-	@wget https://raw.githubusercontent.com/NielsDev/IL2VM/master/C/include/output.h -O include/output.h -q --no-check-certificate
+	@wget https://raw.githubusercontent.com/NielsDev/IL2VM/master/C/include/binarystructs.h -O include/binarystructs.h -q --no-check-certificate
 	
 kernel.elf: $(OBJ_FILES) 
 	@echo Linking kernel...
 	@$(Linker) -T link.ld $(L_FLAGS) -o build/kernel.bin $(OBJ_FILES_BUILD)
-	@cp build/kernel.bin E:\
-
-kernel.img: kernel.elf
-	@echo cleaning up...
-	@$(DellAll)
+	@$(CP) build\kernel.bin E:\
 
 clean:
 	@echo cleaning up...
-	@$(RM) $(OBJ_FILES_BUILD) kernel.elf
+	@$(DellAll)
 
 %.o: %.asm Makefile
 	@echo Assembling $<...
 	@$(Nasm) $(A_FLAGS)  $< -o $(patsubst source/%.o,$(BUILD_DIR)%.o, $@)
 
-
 %.o: %.c Makefile
 	@echo Compiling $<..
-	@$(gcc_cmd) $(C_FLAGS) -c $< -o $(patsubst source/%.o,$(BUILD_DIR)%.o, $@)
+	@$(GCC) $(C_FLAGS) -c $< -o $(patsubst source/%.o,$(BUILD_DIR)%.o, $@)

@@ -3,21 +3,33 @@
 #include <multiboot.h>
 #include <kheap.h>
 #include <stdio.h>
+#include <runtime.h>
 
 void _Exit(int status)
 {
-	printf("_exit(%d)\n", status);
-	for(;;);
+    printf("_Exit(%d)\n", status);
+    for(;;);
 }
 
-int main(int argc, char *argv[]);
+void kmain(multiboot_t* multiboot, uint32_t magic)
+{
+    /* Check if there are modules */
+    if(multiboot->mods_count == 0)
+    {
+        printf("No modules available. Can't boot.");
+        _Exit(EXIT_FAILURE);
+    }
 
-void kmain(multiboot_t *multiboot, uint32_t magic) {
+    /* Get module and info about it */
+    multiboot_module_t* module = (multiboot_module_t*) multiboot->mods_addr;
+    uintptr_t start = module->mod_start;
+    uintptr_t end   = module->mod_end;
 
-	extern void *end;
-    heap_install((uintptr_t) &end);
+    /* Install heap after module */
+    heap_install(end);
 
-    main(0, NULL);
+    /* Run VM */
+    run_vm((void*) start);
 
     for(;;);
 }

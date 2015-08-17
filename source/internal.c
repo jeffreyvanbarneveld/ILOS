@@ -1,6 +1,8 @@
 #include <stack.h>
 #include <runtime.h>
 #include <stdio.h>
+#include <internal.h>
+#include <string.h>
 
 /* TAKEN FROM IL2VM */
 
@@ -11,8 +13,6 @@ void System_Console_WriteLine1()
 
 void System_String_Concat2()
 {
-    /* TODO: free string (Garbage Collector ?) */
-
     /* Unions to store data into */
     data first, second;
     _st(&second);
@@ -31,8 +31,6 @@ void System_String_Concat2()
 
 void System_String_Concat3()
 {
-    /* TODO: free string (Garbage Collector ?) */
-
     /* Unions to store data into */
     data first, second, third;
     _st(&third);
@@ -50,3 +48,20 @@ void System_String_Concat3()
     _append_data(str, &third);
     stack_push_str(str_original);
 }
+
+void System_String_get_Length0()
+{
+    char *str = stack_pop_str();
+    stack_push_int32(strlen(str));
+}
+
+/* Runtime methods */
+runtime_func runtimeMethods[] =
+{
+    NULL,
+    NULL,
+    System_Console_WriteLine1,
+    System_String_Concat2,
+    System_String_Concat3,
+    System_String_get_Length0
+};
