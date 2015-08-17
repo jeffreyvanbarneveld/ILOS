@@ -3,8 +3,8 @@
 /**
  *
  * Copies memory from src to dest
- * @param dest the destination location
- * @param src the source location
+ * @param dest  the destination location
+ * @param src   the source location
  * @param count the amount to copy
  *
 **/
@@ -25,8 +25,8 @@ void memcpy(void *dest, void *src, size_t count)
 /**
  *
  * Compares 2 char pointers n times
- * @param s1 first pointer
- * @param s2 second pointer
+ * @param  s1 first pointer
+ * @param  s2 second pointer
  * @return difference
  *
 **/
@@ -47,8 +47,8 @@ int memcmp(const char *s1, const char *s2, size_t n)
 /**
  *
  * Sets a part of the memory to the given value
- * @param dest the destination location in memory
- * @param val the value to set it to
+ * @param dest  the destination location in memory
+ * @param val   the value to set it to
  * @param count the amount of bytes to set
  *
 **/
@@ -60,8 +60,8 @@ void memset(void *dest, const uint8_t val, size_t count)
 /**
  *
  * Sets a part of the memory to the given value
- * @param dest the destination location in memory
- * @param val the value to set it to
+ * @param dest  the destination location in memory
+ * @param val   the value to set it to
  * @param count the amount of words to set
  *
 **/
@@ -73,8 +73,8 @@ void memsetw(void *dest, const uint16_t val, size_t count)
 /**
  *
  * Sets a part of the memory to the given value
- * @param dest the destination location in memory
- * @param val the value to set it to
+ * @param dest  the destination location in memory
+ * @param val   the value to set it to
  * @param count the dwords of bytes to set
  *
 **/

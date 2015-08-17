@@ -5,12 +5,25 @@
 #include <stdio.h>
 #include <runtime.h>
 
+/**
+ *
+ * Exit the VM with a status code
+ * @param status the status code
+ *
+**/
 void _Exit(int status)
 {
     printf("_Exit(%d)\n", status);
     for(;;);
 }
 
+/**
+ *
+ * Kernel entrypoint
+ * @param multiboot pointer to multiboot header
+ * @param magic     magic value from multiboot bootloader
+ *
+**/
 void kmain(multiboot_t* multiboot, uint32_t magic)
 {
     /* Check magic */

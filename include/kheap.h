@@ -3,18 +3,18 @@
 
 #include <stdint.h>
 
-#define HEAP_BLOCKS         0x100
-#define HEAP_INITIAL_SIZE   16
+#define HEAP_BLOCKS 0x100
 
-// Structure of one memory block
-typedef struct memory_block {
-	uint8_t  used;
-	uint32_t address;
-	uint32_t size;
+/* Structure of one memory block */
+typedef struct memory_block
+{
+    uint8_t   used;
+    size_t    size;
+    uintptr_t address;
 } memory_block_t;
 
 void heap_install();
-void *malloc(unsigned int size);
-void free(void *ptr);
+void *malloc(size_t size);
+void free(void* ptr);
 
 #endif

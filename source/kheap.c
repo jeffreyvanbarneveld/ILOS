@@ -5,88 +5,94 @@
 #include <memory.h>
 #include <string.h>
 
+/* Info */
 uintptr_t block_location;
 memory_block_t *blocks;
-uint32_t heap_start;
+uintptr_t heap_start;
 
 /**
  * 
- * Allocate memory to the heap
+ * Allocate memory from the heap
  * 
- * @param  size [description]
- * @return      [description]
- */
-void *malloc(unsigned int size) 
+ * @param  size
+ * @return pointer to allocated memory
+ *
+**/
+void *malloc(size_t size) 
 {
-	if (size <= 0)
-		return 0;
+    /* Nothing to allocate? */
+    if(size <= 0)
+        return NULL;
 
-	uint32_t index = 0;
-	uint32_t offset = 0;
-	while (index < HEAP_BLOCKS) 
-	{
-		// Get block
-		memory_block_t *block = &blocks[index];
+    /* Loop through every block */
+    uint32_t index = 0;
+    uint32_t offset = 0;
+    while(index < HEAP_BLOCKS) 
+    {
+        /* Get block */
+        memory_block_t *block = &blocks[index];
 
-		/**
-		*
-		* Block used?
-		*
-		**/
-		if (block->used) 
-		{
-			offset += block->size;
-			index++;
-			continue;
-		}
+        /* Block used? Proceed to next one */
+        if(block->used) 
+        {
+            offset += block->size;
+            index++;
+            continue;
+        }
 
-		if (block->size >= size || block->size == 0) 
-		{
-			block->used = 1;
-			block->address = offset;
-			if (block->size == 0)
-				block->size = size;
+        /* Block size enough or block never used before? */
+        if(block->size >= size || block->size == 0) 
+        {
+            block->used = 1;
+            block->address = offset;
+            if(block->size == 0)
+                block->size = size;
 
+            return (void *)(heap_start + offset);
+        }
 
-			return (void *)(heap_start + offset);
-		}
+        /* Next block */
+        offset += block->size;
+        index++;
+    }
 
-		offset += block->size;
-		index++;
-	}
-
-	printf("HEAP OUT OF MEMORY, PANIC PANIC!!!");
-	for (;;);
-	return 0;
+    printf("HEAP OUT OF MEMORY, PANIC PANIC!!!");
+    for(;;);
+    return 0;
 }
 
-void free(void *ptr) 
+/**
+ *
+ * Frees memory allocated using malloc
+ * @param ptr pointer to allocated memory
+ *
+**/
+void free(void* ptr) 
 {
+    /* Invalid pointer? */
+    if (ptr == NULL)
+        return;
 
-	// Invalid pointer?
-	if (ptr == NULL)
-		return;
+    /* Calculate the address */
+    uintptr_t address = (uintptr_t) ptr - heap_start;
 
-	// Calculate the address
-	uint32_t address = (uint32_t)ptr - heap_start;
+    /* Loop through blocks and find offset from address */
+    uint32_t index = 0;
+    while (index < HEAP_BLOCKS) 
+    {
+        /* Get block */
+        memory_block_t *block = &blocks[index];
 
-	// Loop through blocks and find offset from address
-	uint32_t index = 0;
-	while (index < HEAP_BLOCKS) 
-	{
-		// Get block
-		memory_block_t *block = &blocks[index];
+        /* Address correct? Mark as unused! */
+        if(block->used && block->address == address) 
+        {
+            block->used = 0;
+            return;
+        }
 
-		// Address correct? Mark as unused!
-		if (block->used && block->address == address) 
-		{
-			block->used = 0;
-			return;
-		}
-
-		// Next up
-		index++;
-	}
+        /* Next up */
+        index++;
+    }
 }
 
 /**
@@ -95,17 +101,13 @@ void free(void *ptr)
  * @param address the starting address
  *
 **/
-void heap_install(uintptr_t address) {
-	// Set heap
-	uint32_t start = address;
-	heap_start = start + 0x1000;
-	block_location = heap_start;
+void heap_install(uintptr_t address)
+{
+    /* Set heap address */
+    size_t blocksize = (HEAP_BLOCKS * sizeof(memory_block_t));
+    heap_start = address + blocksize;
+    blocks = (memory_block_t *) address;
 
-	// Allocate blocks
-	uint32_t blocksize = sizeof(memory_block_t) * HEAP_BLOCKS;
-	heap_start += blocksize;
-
-	// Initialise memory blocks
-	memset((void *)block_location, 0, blocksize);
-	blocks = (memory_block_t *)block_location;
+    /* Initialise memory blocks */
+    memset(blocks, 0, blocksize);
 }
