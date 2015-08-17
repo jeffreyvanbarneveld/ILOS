@@ -8,7 +8,7 @@
  * @return the length
  *
 **/
-size_t strlen(const char *text)
+size_t strlen(const char* text)
 {
     size_t i = 0;
     while(text[i])
@@ -25,7 +25,7 @@ size_t strlen(const char *text)
  * @return the new buffer offset
  *
 **/
-char *sprintf_write_dec(char *str, int32_t val)
+char* sprintf_write_dec(char* str, int32_t val)
 {
     /* Special case for zero */
     if(val == 0)
@@ -66,7 +66,7 @@ char *sprintf_write_dec(char *str, int32_t val)
  * @return the new buffer offset
  *
 **/
-char *sprintf_write_double(char *str, double val)
+char* sprintf_write_double(char* str, double val)
 {
     /* Find position of comma */
     int wholes = (int) val;
@@ -113,7 +113,7 @@ char *sprintf_write_double(char *str, double val)
  * @return the new buffer offset
  *
 **/
-char *sprintf_write_hex(char *str, uint32_t hex)
+char* sprintf_write_hex(char* str, uint32_t hex)
 {
     /* Special case for zero */
     if(hex == 0)
@@ -151,7 +151,7 @@ char *sprintf_write_hex(char *str, uint32_t hex)
  * @return the new buffer offset
  *
 **/
-char *sprintf_write(char *str, char *s)
+char* sprintf_write(char* str, char* s)
 {
     size_t length = strlen(s);
     for(uint32_t j = 0; j < length; j++)
@@ -169,7 +169,7 @@ char *sprintf_write(char *str, char *s)
  * @return length of resulting string
  *
 **/
-int vsprintf(char *str, const char *format, va_list args)
+int vsprintf(char* str, const char* format, va_list args)
 {
     uintptr_t start = (uintptr_t) str;
     
@@ -234,7 +234,7 @@ int vsprintf(char *str, const char *format, va_list args)
  * @return length of resulting string
  *
 **/
-int sprintf(char *str, const char *format, ...)
+int sprintf(char* str, const char* format, ...)
 {
     /* Pass to vssprintf */
     va_list args;

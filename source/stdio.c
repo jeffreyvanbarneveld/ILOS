@@ -3,10 +3,10 @@
 #include <memory.h>
 #include <stdio.h>
 
-uint16_t *textmemptr = (uint16_t *) 0xB8000;
-uint16_t attrib = 0x07;
-int8_t   csr_x = 0;
-int8_t   csr_y = 0;
+uint16_t* textmemptr = (uint16_t *) 0xB8000;
+uint16_t  attrib = 0x07;
+int8_t    csr_x = 0;
+int8_t    csr_y = 0;
 
 /**
  *
@@ -14,7 +14,7 @@ int8_t   csr_y = 0;
  * @param str the error string
  *
 **/
-void perror(char *str)
+void perror(char* str)
 {
     printf("PERROR(%s)\n", str);
 }
@@ -163,7 +163,7 @@ void screen_write_double(double val)
  * @param ... the data
  *
 **/
-void printf(const char *str, ...)
+void printf(const char* str, ...)
 {
     va_list args;
     va_start(args, str);

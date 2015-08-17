@@ -3,8 +3,8 @@
 
 #include <stdint.h>
 
-void printf(const char *str, ...);
-void perror(char *str);
+void printf(const char* str, ...);
+void perror(char* str);
 void screen_scroll();
 void putch(char c);
 void screen_writeline(char *text);
