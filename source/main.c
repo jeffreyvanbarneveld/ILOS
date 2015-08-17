@@ -13,6 +13,13 @@ void _Exit(int status)
 
 void kmain(multiboot_t* multiboot, uint32_t magic)
 {
+    /* Check magic */
+    if(magic != 0x1BADB002)
+    {
+        printf("Multiboot magic is incorrect.");
+        _Exit(EXIT_FAILURE);
+    }
+    
     /* Check if there are modules */
     if(multiboot->mods_count == 0)
     {
@@ -30,6 +37,4 @@ void kmain(multiboot_t* multiboot, uint32_t magic)
 
     /* Run VM */
     run_vm((void*) start);
-
-    for(;;);
 }

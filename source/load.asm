@@ -16,6 +16,7 @@ mboot:
     dd MULTIBOOT_HEADER_FLAGS
     dd MULTIBOOT_CHECKSUM
     
+    ; AOUT locations, but we use ELF so we don't need to use this
     dd 0
     dd 0
     dd 0
