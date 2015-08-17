@@ -14,16 +14,16 @@ void _Exit(int status)
 void kmain(multiboot_t* multiboot, uint32_t magic)
 {
     /* Check magic */
-    if(magic != 0x1BADB002)
+    if(magic != 0x2BADB002)
     {
-        printf("Multiboot magic is incorrect.");
+        printf("Multiboot magic is incorrect.\n");
         _Exit(EXIT_FAILURE);
     }
-    
+
     /* Check if there are modules */
     if(multiboot->mods_count == 0)
     {
-        printf("No modules available. Can't boot.");
+        printf("No modules available. Can't boot.\n");
         _Exit(EXIT_FAILURE);
     }
 
