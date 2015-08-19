@@ -6,11 +6,6 @@
 
 /* TAKEN FROM IL2VM */
 
-void System_Console_WriteLine1()
-{
-    printf("%s\n", stack_pop_str());
-}
-
 void System_String_Concat2()
 {
     /* Unions to store data into */
@@ -65,9 +60,6 @@ void System_String_get_Chars1()
 /* Runtime methods */
 runtime_func runtimeMethods[] =
 {
-    NULL,
-    NULL,
-    System_Console_WriteLine1,
     System_String_Concat2,
     System_String_Concat3,
     System_String_get_Length0,
