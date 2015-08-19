@@ -8,7 +8,7 @@ namespace ILOS
 {
     unsafe class Console
     {
-        private static byte color = 0xCE;
+        private static byte color = 0x01;
         private static byte* start = (byte*) 0xB8000;
         private static int cur_x = 0;
         private static int cur_y = 0;
@@ -17,7 +17,10 @@ namespace ILOS
         {
             int offset = (cur_y * 80 + cur_x) * 2;
             start[offset + 0] = (byte) c;
-            start[offset + 1] = color;
+            start[offset + 1] = color++;
+
+            if (color > 0xFF)
+                color = 0x01;
 
             cur_x++;
             if (cur_x > 80)
@@ -30,10 +33,13 @@ namespace ILOS
         public static void Write(string str)
         {
             int len = str.Length;
-                     
             int i = 0;
-            while (i++ < len)
+
+            while(i < len)
+            {
                 putchar(str[i]);
+                i++;
+            }
         }
     }
 }

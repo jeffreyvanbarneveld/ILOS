@@ -55,6 +55,13 @@ void System_String_get_Length0()
     stack_push_int32(strlen(str));
 }
 
+void System_String_get_Chars1()
+{
+    int32_t index = stack_pop_int32();
+    char *str = stack_pop_str();
+    stack_push_int32(str[index]);
+}
+
 /* Runtime methods */
 runtime_func runtimeMethods[] =
 {
@@ -63,5 +70,6 @@ runtime_func runtimeMethods[] =
     System_Console_WriteLine1,
     System_String_Concat2,
     System_String_Concat3,
-    System_String_get_Length0
+    System_String_get_Length0,
+    System_String_get_Chars1
 };

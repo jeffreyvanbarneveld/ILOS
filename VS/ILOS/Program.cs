@@ -10,9 +10,9 @@ namespace ILOS
     {
         static void Main(string[] args)
         {
-            for(int i = 0; i < 81; i++)
+            for(int i = 0; i < 0xFF; i++)
                 Console.putchar('a');
-
+            
             Console.Write("test");
         }
     }
