@@ -11,7 +11,7 @@ namespace ILOS
             SerialPort.Init();
             SerialPort.Write("Chuuk chuuk");
             Console.Write("Tijd is: " + RTC.Hours);
-            Console.WriteLine(" " + RTC.Minutes);
+            Console.WriteLine(":" + RTC.Minutes);
             Console.WriteLine(" ");
             Console.WriteLine(" ");
             Console.WriteLine(" ");

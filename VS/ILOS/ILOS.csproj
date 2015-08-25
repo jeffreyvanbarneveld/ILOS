@@ -61,6 +61,8 @@
   <ItemGroup>
     <Compile Include="Console.cs" />
     <Compile Include="Drivers\Char\SerialPort.cs" />
+    <Compile Include="Drivers\Storage\ATA.cs" />
+    <Compile Include="Drivers\Storage\ATA_Variables.cs" />
     <Compile Include="ilvm_methods\ILVM.cs" />
     <Compile Include="Portio.cs" />
     <Compile Include="Program.cs" />
