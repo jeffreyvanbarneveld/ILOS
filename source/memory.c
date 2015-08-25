@@ -16,8 +16,8 @@ void memcpy(void *dest, void *src, size_t count)
 
     /* Fast memcpy */
     asm volatile("cld;"
-                 "rep movsl;"
-                 "mov %3, %2;"
+                 "rep movsd;"
+                 "mov %2, %3;"
                  "rep movsb"
                  : "+S" (src), "+D" (dest) : "c" (count >> 2), "r" (count & 3) : "memory");
 }
@@ -80,5 +80,5 @@ void memsetw(void *dest, const uint16_t val, size_t count)
 **/
 void memsetd(void *dest, const uint32_t val, size_t count)
 {
-    asm volatile("cld; rep stosl" : "+c" (count), "+D" (dest) : "a" (val) : "memory");
+    asm volatile("cld; rep stosd" : "+c" (count), "+D" (dest) : "a" (val) : "memory");
 }

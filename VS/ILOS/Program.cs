@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using ILVM;
 
 namespace ILOS
 {
@@ -10,10 +6,9 @@ namespace ILOS
     {
         static void Main(string[] args)
         {
-            for(int i = 0; i < 0xFF; i++)
-                Console.putchar('a');
-            
-            Console.Write("test");
+            Registers regs = new Registers();
+            Asm.Execute("mov eax, 1337", regs);
+            Console.Write("eax=" + regs.eax);
         }
     }
 }

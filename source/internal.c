@@ -57,11 +57,19 @@ void System_String_get_Chars1()
     stack_push_int32(str[index]);
 }
 
+void System_Environment_GetResourceString1()
+{
+    /* Incoming is a string that needs to be converted */
+    /* Outgoing is a converted string */
+    /* Just passing incoming -> outgoing */
+}
+
 /* Runtime methods */
 runtime_func runtimeMethods[] =
 {
     System_String_Concat2,
     System_String_Concat3,
     System_String_get_Length0,
-    System_String_get_Chars1
+    System_String_get_Chars1,
+    System_Environment_GetResourceString1
 };

@@ -4,7 +4,7 @@
 #include <stdint.h>
 
 void printf(const char* str, ...);
-void perror(char* str);
+void puts(char* text);
 void screen_scroll();
 void putch(char c);
 void screen_writeline(char *text);

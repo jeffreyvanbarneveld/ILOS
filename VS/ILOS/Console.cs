@@ -10,16 +10,15 @@ namespace ILOS
     {
         private static byte color = 0x01;
         private static byte* start = (byte*) 0xB8000;
-        private static int cur_x = 0;
-        private static int cur_y = 0;
+        public static int cur_x = 0;
+        public static int cur_y = 0;
         
         public static void putchar(char c)
         {
             int offset = (cur_y * 80 + cur_x) * 2;
             start[offset + 0] = (byte) c;
             start[offset + 1] = color++;
-
-            if (color > 0xFF)
+            if (color > 0x80)
                 color = 0x01;
 
             cur_x++;

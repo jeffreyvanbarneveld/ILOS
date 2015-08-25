@@ -8,16 +8,6 @@ uint16_t  attrib = 0x07;
 int8_t    csr_x = 0;
 int8_t    csr_y = 0;
 
-/**
- *
- * Print an error to the screen
- * @param str the error string
- *
-**/
-void perror(char* str)
-{
-    printf("PERROR(%s)\n", str);
-}
 
 /**
  *
@@ -111,6 +101,18 @@ void screen_write(char* text)
     /* Put each character on screen until a \0 is found */
     while(*text)
         putch(*text++);
+}
+
+/**
+ *
+ * Writes text to the screen
+ * @param text the text
+ *
+**/
+void puts(char* text)
+{
+    screen_write(text);
+    putch('\n');
 }
 
 /**

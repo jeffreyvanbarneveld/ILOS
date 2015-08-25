@@ -12,7 +12,7 @@ OBJ_FILES 	+= $(patsubst %.c,%.o, $(C_FILES))
 OBJ_FILES_BUILD := $(patsubst source/%.o,$(BUILD_DIR)%.o, $(OBJ_FILES))
 
 # compile flags
-C_FLAGS		:=  -I./include -std=gnu99 -m32 -Wall -O -fno-stack-protector -finline-functions -fno-builtin
+C_FLAGS		:=  -I./include -std=gnu99 -masm=intel -m32 -Wall -O -fno-stack-protector -finline-functions -fno-builtin
 L_FLAGS		:= -m elf_i386
 A_FLAGS		:= -f elf32
 
