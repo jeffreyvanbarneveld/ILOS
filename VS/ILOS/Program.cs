@@ -1,28 +1,29 @@
-﻿using ILVM;
+﻿using ILOS.Drivers.Char;
 
 namespace ILOS
 {
     class Program
     {
-        static void Out8(ushort port, byte value)
-        {
-            Registers regs = default(Registers);
-            regs.eax = value;
-            regs.edx = port;
-            Asm.Execute("outb dx, al", regs);
-        }
-
         static void Main(string[] args)
         {
-            int x = 5;
-            int y = 5;
-            int index = y * 80 + x;
+            Console.WriteLine("Starting ILOS...");
 
-            // Move vga cursor as a test
-            Out8(0x3D4, 14);
-            Out8(0x3D5, (byte)(index >> 8));
-            Out8(0x3D4, 15);
-            Out8(0x3D5, (byte)(index & 0xFF));
+            SerialPort.Init();
+            SerialPort.Write("Chuuk chuuk");
+            Console.Write("Tijd is: " + RTC.Hours);
+            Console.WriteLine(" " + RTC.Minutes);
+            Console.WriteLine(" ");
+            Console.WriteLine(" ");
+            Console.WriteLine(" ");
+
+            while (true)
+            {
+                byte b;
+                while ((b = SerialPort.Read()) != (byte)'\n')
+                    Console.PutChar((char)b);
+                Console.PutChar('\n');
+            }
+
         }
     }
 }

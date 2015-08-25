@@ -18,12 +18,12 @@ A_FLAGS		:= -f elf32
 
 ifeq ($(OS),Windows_NT)
    FixPath = $(subst /,\,$1)
-   RM = del
-   DellAll = $(RM) build\*.o
+   RM = rm
+   DellAll = $(RM) build/*.o
    Nasm = "tools/Nasm/nasm.exe"
    Linker = "tools/gcc/bin/i586-elf-ld.exe"
    GCC = "tools/gcc/bin/i586-elf-gcc.exe"
-   CP = copy
+   CP = cp
 else
    ifeq ($(shell uname), Linux)
       RM = rm -f
@@ -53,7 +53,7 @@ sync:
 kernel.elf: $(OBJ_FILES) 
 	@echo Linking kernel...
 	@$(Linker) -T link.ld $(L_FLAGS) -o build/kernel.bin $(OBJ_FILES_BUILD)
-	@$(CP) build\kernel.bin V:\
+	@$(CP) build/kernel.bin V:\
 
 clean:
 	@echo cleaning up...
