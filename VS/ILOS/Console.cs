@@ -2,58 +2,78 @@
 {
     unsafe class Console
     {
-        private static byte color = 0x0F;
-        private static byte* start = (byte*) 0xB8000;
-        public static int cur_x = 0;
-        public static int cur_y = 0;
+        private static byte attribute = 0x0F;
+        private static byte* textmem  = (byte*) 0xB8000;
+        private static int cursor_x   = 0;
+        private static int cursor_y   = 0;
         
+        public int CursorX
+        {
+            get { return cursor_x; }
+            set
+            {
+                cursor_x = value;
+                MoveVGACursor();
+            }
+        }
+
+        public int CursorY
+        {
+            get { return cursor_y; }
+            set
+            {
+                cursor_y = value;
+                MoveVGACursor();
+            }
+        }
+
         /// <summary>
         /// Moves the VGA mode text cursor
         /// </summary>
-        public static void MoveCursor()
+        public static void MoveVGACursor()
         {
-            int index = cur_y * 80 + cur_x;
+            int index = cursor_y * 80 + cursor_x;
             Portio.Out8(0x3D4, 14);
             Portio.Out8(0x3D5, (byte)(index >> 8));
             Portio.Out8(0x3D4, 15);
             Portio.Out8(0x3D5, (byte)(index & 0xFF));
         }
-
+        
         /// <summary>
         /// Plot char to screen
         /// </summary>
         /// <param name="c">Char to plot</param>
         public static void PutChar(char c)
         {
-            int offset = (cur_y * 80 + cur_x) * 2;
+            int offset = (cursor_y * 80 + cursor_x) * 2;
             
             if (c == '\n')
             {
-                cur_x = 0;
-                cur_y++;
+                cursor_x = 0;
+                cursor_y++;
             }
             else if (c == '\r')
             {
-                cur_x = 0;
+                cursor_x = 0;
             }
             else if (c == '\t')
             {
-                cur_x = (cur_x + 4) & ~(4 - 1);
+                cursor_x = (cursor_x + 4) & ~(4 - 1);
             }
             else
             {
-                start[offset + 0] = (byte)c;
-                start[offset + 1] = color;
+                textmem[offset + 0] = (byte)c;
+                textmem[offset + 1] = attribute;
 
-                cur_x++;
-                if (cur_x > 80)
+                cursor_x++;
+                if (cursor_x > 80)
                 {
-                    cur_x = 0;
-                    cur_y++;
+                    cursor_x = 0;
+                    cursor_y++;
                 }
             }
 
-            MoveCursor();
+            MoveVGACursor();
         }
 
         /// <summary>
