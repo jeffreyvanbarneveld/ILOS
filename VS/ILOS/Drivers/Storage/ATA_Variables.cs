@@ -65,7 +65,7 @@ namespace ILOS.Drivers.Storage
 
     struct IDE_DEVICE
     {
-        public uint Exists;
+        public bool Exists;
         public byte Channel;
 
         public uint Base;

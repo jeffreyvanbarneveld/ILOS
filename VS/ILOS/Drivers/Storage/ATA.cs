@@ -13,6 +13,10 @@ namespace ILOS.Drivers.Storage
         const int ATA_SECONDARY_IO = 0x170;
 
         private static IDE_DEVICE device = new IDE_DEVICE();
+        public static IDE_DEVICE FirstDevice
+        {
+            get { return device; }
+        }
         
         /// <summary>
         /// Select IDE drive
@@ -71,7 +75,7 @@ namespace ILOS.Drivers.Storage
                 if ((status & ATA_STATUS_ERR) != 0)
                     return null;
 
-                if ((status ^ ATA_STATUS_DRQ) != 0)
+                if ((status & ATA_STATUS_DRQ) != 0)
                     break;
             }
 
@@ -101,7 +105,15 @@ namespace ILOS.Drivers.Storage
             device.Channel = channel;
             device.Drive = drive;
 
+            byte[] result = identify(channel, drive);
 
+            if (result == null)
+            {
+                device.Exists = false;
+                return;
+            }
+
+            device.Exists = true;
         }
 
         /// <summary>
@@ -110,6 +122,7 @@ namespace ILOS.Drivers.Storage
         public static void Init()
         {
             Probe();
+            
         }
     }
 }

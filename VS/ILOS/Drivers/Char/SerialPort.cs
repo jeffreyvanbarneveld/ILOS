@@ -52,21 +52,21 @@ namespace ILOS.Drivers.Char
             }
         }
 
-        public static byte Read()
+        public static char Read()
         {
             while (transmit_received() == 0) ;
 
             byte dat = Portio.In8(COM1);
 
-            return dat;
+            return (char)dat;
         }
         public static string ReadLine()
         {
             string str = "";
 
-            byte b;
+            char b;
             while ((b = Read()) != (byte)'\n')
-                str += (char)b;
+                str += b;
 
             return str;
         }

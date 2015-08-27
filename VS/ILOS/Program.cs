@@ -1,4 +1,5 @@
 ﻿using ILOS.Drivers.Char;
+using ILOS.Drivers.Storage;
 
 namespace ILOS
 {
@@ -9,21 +10,14 @@ namespace ILOS
             Console.WriteLine("Starting ILOS...");
 
             SerialPort.Init();
-            SerialPort.Write("Chuuk chuuk");
-            Console.Write("Tijd is: " + RTC.Hours);
+            Console.Write("Time is: " + RTC.Hours);
             Console.WriteLine(":" + RTC.Minutes);
-            Console.WriteLine(" ");
-            Console.WriteLine(" ");
-            Console.WriteLine(" ");
-
-            while (true)
-            {
-                byte b;
-                while ((b = SerialPort.Read()) != (byte)'\n')
-                    Console.PutChar((char)b);
-                Console.PutChar('\n');
-            }
-
+            Console.WriteLine("Looking for ata disk ON ATA_PRIMARY");
+            ATA.Init();
+            if (ATA.FirstDevice.Exists)
+                Console.WriteLine("Found drive on ATA_PRIMARY");
+            else
+                Console.WriteLine("No disk found :(");
         }
     }
 }
