@@ -1,12 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ILOS.Drivers.Storage
+﻿namespace ILOS.Drivers.Storage
 {
-
     unsafe partial class ATA
     {
         const int ATA_PRIMARY_IO = 0x1F0;
@@ -45,27 +38,31 @@ namespace ILOS.Drivers.Storage
         /// <returns></returns>
         private static byte[] identify(byte channel, byte drive)
         {
+            // Select correct drive
             select_drive(channel, drive);
 
+            // Select base port for ATA drive
             uint @base;
-
             if (channel == ATA_PRIMARY)
                 @base = ATA_PRIMARY_IO;
             else
                 @base = ATA_SECONDARY_IO;
 
+            // Set to first LBA
             Portio.Out8((ushort)(@base + ATA_REG_SECCNT), 0x00);
             Portio.Out8((ushort)(@base + ATA_REG_LBALO), 0x00);
             Portio.Out8((ushort)(@base + ATA_REG_LBAMID), 0x00);
             Portio.Out8((ushort)(@base + ATA_REG_LBAHI), 0x00);
 
-            Portio.Out8((ushort)(@base + ATA_REG_STATUS), 0x00);
+            Portio.Out8((ushort)(@base + ATA_REG_CMD), ATA_CMD_IDENTIFY);
 
+            // Check if a drive is found
             byte status = Portio.In8((ushort)(@base + ATA_REG_STATUS));
             if (status == 0)
                 return null;
 
-            while ((Portio.In8((ushort)(@base + ATA_REG_STATUS)) & ATA_STATUS_BSY) != 0)
+            // Wait until drive is not busy anymore
+            while ((status & ATA_STATUS_BSY) != 0)
                 status = Portio.In8((ushort)(@base + ATA_REG_STATUS));
 
             while(true)
@@ -79,8 +76,8 @@ namespace ILOS.Drivers.Storage
                     break;
             }
 
+            // Read data from ATA drive
             byte[] ide_buf = new byte[256];
-            
             for(int i = 0; i < 128; i++)
             {
                 ushort shrt = Portio.In16((ushort)(@base + ATA_REG_DATA));
@@ -97,7 +94,7 @@ namespace ILOS.Drivers.Storage
         /// </summary>
         private static void Probe()
         {
-            uint @base = ATA_PRIMARY_IO;
+            ushort @base = ATA_PRIMARY_IO;
             byte channel = ATA_PRIMARY;
             byte drive = ATA_PRIMARY;
 
@@ -122,7 +119,6 @@ namespace ILOS.Drivers.Storage
         public static void Init()
         {
             Probe();
-            
         }
     }
 }

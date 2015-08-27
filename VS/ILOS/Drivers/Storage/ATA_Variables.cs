@@ -68,8 +68,8 @@ namespace ILOS.Drivers.Storage
         public bool Exists;
         public byte Channel;
 
-        public uint Base;
-        public uint Drive;
+        public ushort Base;
+        public byte Drive;
         public ulong Size;
 
         public uint cmdSet;

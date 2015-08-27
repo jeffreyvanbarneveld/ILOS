@@ -18,6 +18,8 @@ namespace ILOS
                 Console.WriteLine("Found drive on ATA_PRIMARY");
             else
                 Console.WriteLine("No disk found :(");
+
+            
         }
     }
 }
