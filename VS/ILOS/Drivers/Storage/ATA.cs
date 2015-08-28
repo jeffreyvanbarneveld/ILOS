@@ -90,6 +90,80 @@
         }
 
         /// <summary>
+        /// Wait for drive to be finished
+        /// </summary>
+        /// <param name="@base">Base IO base</param>
+        private static void ata_poll(uint @base)
+        {
+            for (int i = 0; i < 4; i++)
+                Portio.In8((ushort)(@base + ATA_REG_ALTSTATUS));
+
+            byte status = Portio.In8((ushort)(@base + ATA_REG_STATUS));
+            while ((status & ATA_STATUS_BSY) > 0)
+                status = Portio.In8((ushort)(@base + ATA_REG_STATUS));
+            
+            while((status & ATA_STATUS_DRQ) == 0)
+            {
+                status = Portio.In8((ushort)(@base + ATA_REG_STATUS));
+
+                if ((status & ATA_STATUS_DF) > 0)
+                    Panic.Do("Device fault!");
+                
+                if ((status & ATA_STATUS_ERR) > 0)
+                    Panic.Do("ERR IN ATA!!");
+            }
+        }
+
+        /// <summary>
+        /// Read sectors into the output buffer and return size in bytes
+        /// </summary>
+        /// <param name="lba">Input LBA</param>
+        /// <param name="size">Size in sectors</param>
+        /// <param name="buffer">Output buffer</param>
+        /// <returns></returns>
+        public static int readSector(uint lba, byte size, byte[] buffer)
+        {
+            if (!device.Exists)
+                return 0;
+
+            uint @base = device.Base;
+            int drive = device.Drive;
+
+            int cmd = (drive == ATA_MASTER) ? 0xE0 : 0xF0;
+
+            // Set Drive
+            Portio.Out8((ushort)(@base + ATA_REG_DRIVE), (byte)(cmd | (byte)((lba >> 24) & 0x0F)));
+
+            // Set PIO MODE
+            Portio.Out8((ushort)(@base + ATA_REG_FEATURE), ATA_FEATURE_PIO);
+
+            // Set size
+            Portio.Out8((ushort)(@base + ATA_REG_SECCNT), size);
+
+            // Set LBA
+            Portio.Out8((ushort)(@base + ATA_REG_LBALO), (byte)lba);
+            Portio.Out8((ushort)(@base + ATA_REG_LBAMID), (byte)(lba >> 8));
+            Portio.Out8((ushort)(@base + ATA_REG_LBAHI), (byte)(lba >> 16));
+
+            // Issue command
+            Portio.Out8((ushort)(@base + ATA_REG_CMD), ATA_CMD_PIO_READ);
+
+            // Wait till done
+            ata_poll(@base);
+
+            // Read data
+            for (int i = 0; i < size * 256; i++)
+            {
+                ushort @in = Portio.In16((ushort)(@base + ATA_REG_DATA));
+                int pos = i * 2;
+                buffer[pos] = (byte)@in;
+                buffer[pos + 1] = (byte)(@in >> 8);
+            }
+
+            return size * 512;
+        }
+
+        /// <summary>
         /// IDE Prope
         /// </summary>
         private static void Probe()

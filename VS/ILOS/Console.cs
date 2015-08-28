@@ -7,7 +7,7 @@
         private static int cursor_x   = 0;
         private static int cursor_y   = 0;
         
-        public int CursorX
+        public static int CursorX
         {
             get { return cursor_x; }
             set
@@ -17,13 +17,26 @@
             }
         }
 
-        public int CursorY
+        public static int CursorY
         {
             get { return cursor_y; }
             set
             {
                 cursor_y = value;
                 MoveVGACursor();
+            }
+        }
+
+        public static byte AttributeByte
+        {
+            get
+            {
+                return attribute;
+            }
+
+            set
+            {
+                attribute = value;
             }
         }
 
@@ -37,6 +50,22 @@
             Portio.Out8(0x3D5, (byte)(index >> 8));
             Portio.Out8(0x3D4, 15);
             Portio.Out8(0x3D5, (byte)(index & 0xFF));
+        }
+
+        /// <summary>
+        /// Clears the screen and resets cursor
+        /// </summary>
+        public static void ClearScreen()
+        {
+            int size = 80 * 25 * 2;
+            for (int i = 0; i < size; i += 2)
+            {
+                *(textmem + i) = 0x00;
+                *(textmem + i + 1) = attribute;
+            }
+
+            cursor_x = 0;
+            cursor_y = 0;
         }
         
         /// <summary>
@@ -102,5 +131,41 @@
             PutChar('\n');
         }
 
+        /// <summary>
+        /// Writes a hexadecimal number to the screen
+        /// </summary>
+        /// <param name="integer">The number.</param>
+        public static void WriteHex(int integer)
+        {
+            if(integer == 0)
+            {
+                PutChar('0');
+                return;
+            }
+
+            // Don't print zeroes at beginning of number
+            bool noZeroes = true;
+
+            for(int j = 28; j >= 0; j -= 4)
+            {
+                int tmp = (integer >> j) & 0x0F;
+                if (tmp == 0 && noZeroes)
+                    continue;
+
+                noZeroes = true;
+                if (tmp >= 0x0A)
+                    PutChar((char)(tmp - 0x0A + 'A'));
+                else
+                    PutChar((char)(tmp + '0'));
+            }
+        }
+
+        /// <summary>
+        /// Disable cursor
+        /// </summary>
+        public static void DisableCursor()
+        {
+            Portio.Out16(0x3D4, 0x200A);
+        }
     }
 }

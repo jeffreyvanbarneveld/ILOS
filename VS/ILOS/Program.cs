@@ -1,5 +1,6 @@
 ﻿using ILOS.Drivers.Char;
 using ILOS.Drivers.Storage;
+using System;
 
 namespace ILOS
 {
@@ -19,7 +20,15 @@ namespace ILOS
             else
                 Console.WriteLine("No disk found :(");
 
-            
+            byte[] buf = new byte[512];
+            ATA.readSector(0, 1, buf);
+
+            Console.WriteLine("Reading first sector of ATA drive");
+            for(int i = 0; i < 512; i++)
+            {
+                Console.WriteHex(buf[i]);
+                Console.PutChar(' ');
+            }
         }
     }
 }
