@@ -21,6 +21,7 @@ namespace ILOS
             else
                 Console.WriteLine("No disk found :(");
 
+            Console.WriteLine("Name of ATA disk: " + ATA.FirstDevice.Name);
             Console.WriteLine("Duplicating sector 1 on sector2 and read sector 2");
             byte[] buf = new byte[512];
             ATA.ReadSector(0, 1, buf);

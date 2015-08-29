@@ -252,39 +252,34 @@ namespace ILOS.Drivers.Storage
             device.Exists = true;
 
             int pos = ATA_IDENT_COMMANDSETS;
-            device.cmdSet = (uint)(((0xFF & result[pos]) << 24) | ((0xFF & result[pos + 1]) << 16) | ((0xFF & result[pos + 2]) << 8) | (0xFF & result[pos + 3]));
+            device.CmdSet = (uint)(((0xFF & result[pos]) << 24) | ((0xFF & result[pos + 1]) << 16) | ((0xFF & result[pos + 2]) << 8) | (0xFF & result[pos + 3]));
 
             pos = ATA_IDENT_DEVICETYPE;
-            device.type = (ushort)(((result[pos + 1] & 0xFF) << 8) | (result[pos] & 0xFF));
+            device.Type = (ushort)(((result[pos + 1] & 0xFF) << 8) | (result[pos] & 0xFF));
 
             pos = ATA_IDENT_CAPABILITIES;
-            device.capabilities = (ushort)(((result[pos + 1] & 0xFF) << 8) | (result[pos] & 0xFF));
+            device.Capabilities = (ushort)(((result[pos + 1] & 0xFF) << 8) | (result[pos] & 0xFF));
 
             pos = ATA_IDENT_CYLINDERS;
-            device.cylinders = (ushort)(((result[pos + 1] & 0xFF) << 8) | (result[pos] & 0xFF));
+            device.Cylinders = (ushort)(((result[pos + 1] & 0xFF) << 8) | (result[pos] & 0xFF));
 
             pos = ATA_IDENT_HEADS;
-            device.heads = (ushort)(((result[pos + 1] & 0xFF) << 8) | (result[pos] & 0xFF));
+            device.Heads = (ushort)(((result[pos + 1] & 0xFF) << 8) | (result[pos] & 0xFF));
 
             pos = ATA_IDENT_SECTORSPT;
-            device.sectorspt = (ushort)(((result[pos + 1] & 0xFF) << 8) | (result[pos] & 0xFF));
+            device.Sectorspt = (ushort)(((result[pos + 1] & 0xFF) << 8) | (result[pos] & 0xFF));
 
             pos = ATA_IDENT_MAX_LBA;
             device.Size = (uint)(((0xFF & result[pos]) << 24) | ((0xFF & result[pos + 1]) << 16) | ((0xFF & result[pos + 2]) << 8) | (0xFF & result[pos + 3]));
 
-            /*
-            Cannot work:
-                Unimplemented opcode: IL_01d1: ldflda System.String ILOS.Drivers.Storage.IDE_DEVICE::name
             // Model name
             pos = ATA_IDENT_MODEL;
-            device.name = "";
+            device.Name = "";
             for(int i = 0; i < 40; i += 2)
             {
-                device.name += (char)result[pos + i + 1];
-                device.name += (char)result[pos + i];
-            }*/
-
-
+                device.Name += ((char)result[pos + i]).ToString();
+                device.Name += ((char)result[pos + i + 1]).ToString();
+            }
         }
 
         /// <summary>

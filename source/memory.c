@@ -8,7 +8,7 @@
  * @param count the amount to copy
  *
 **/
-void memcpy(void *dest, void *src, size_t count)
+void memcpy(void *dest, const void *src, size_t count)
 {
     /* Something to copy? */
     if(count == 0)
@@ -68,17 +68,4 @@ void memset(void *dest, const uint8_t val, size_t count)
 void memsetw(void *dest, const uint16_t val, size_t count)
 {
     asm volatile("cld; rep stosw" : "+c" (count), "+D" (dest) : "a" (val) : "memory");
-}
-
-/**
- *
- * Sets a part of the memory to the given value
- * @param dest  the destination location in memory
- * @param val   the value to set it to
- * @param count the dwords of bytes to set
- *
-**/
-void memsetd(void *dest, const uint32_t val, size_t count)
-{
-    asm volatile("cld; rep stosd" : "+c" (count), "+D" (dest) : "a" (val) : "memory");
 }

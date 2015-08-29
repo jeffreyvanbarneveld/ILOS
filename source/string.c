@@ -1,5 +1,6 @@
 #include <stdint.h>
 #include <string.h>
+#include <memory.h>
 
 /**
  *
@@ -15,6 +16,21 @@ size_t strlen(const char* text)
         i++;
     
     return i;
+}
+
+/**
+ *
+ * String copy
+ * @param  dest the destination
+ * @param  src  the string to copy from
+ * @return the destination
+ *
+**/
+char* strcpy(char* dest, const char* src)
+{
+    size_t size = strlen(src);
+    memcpy(dest, src, size);
+    return dest;
 }
 
 /**

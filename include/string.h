@@ -12,5 +12,6 @@ typedef __builtin_va_list   va_list;
 int vsprintf(char* str, const char* format, va_list args);
 int sprintf(char* str, const char* format, ...);
 size_t strlen(const char *text);
+char* strcpy(char* dest, const char* src);
 
 #endif
