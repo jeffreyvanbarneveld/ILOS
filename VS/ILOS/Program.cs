@@ -20,10 +20,13 @@ namespace ILOS
             else
                 Console.WriteLine("No disk found :(");
 
+            Console.WriteLine("Duplicating sector 1 on sector2 and read sector 2");
             byte[] buf = new byte[512];
-            ATA.readSector(0, 1, buf);
-
-            Console.WriteLine("Reading first sector of ATA drive");
+            ATA.ReadSector(0, 1, buf);
+            ATA.WriteSector(1, 1, buf);
+            
+            Console.WriteLine("Reading second sector");
+            ATA.ReadSector(1, 1, buf);
             for(int i = 0; i < 512; i++)
             {
                 Console.WriteHex(buf[i]);

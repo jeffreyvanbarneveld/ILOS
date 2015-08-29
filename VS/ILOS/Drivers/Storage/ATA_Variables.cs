@@ -73,13 +73,15 @@ namespace ILOS.Drivers.Storage
         public ulong Size;
 
         public uint cmdSet;
-        public byte type;
-        public byte capabilities;
+        public ushort type;
+        public ushort capabilities;
 
-        byte support48;
+        public byte support48;
 
-        public byte cylinders;
-        public byte heads;
-        public byte sectorspt;
+        public ushort cylinders;
+        public ushort heads;
+        public ushort sectorspt;
+
+        public string name;
     }
 }

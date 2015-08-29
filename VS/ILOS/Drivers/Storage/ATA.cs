@@ -1,4 +1,6 @@
-﻿namespace ILOS.Drivers.Storage
+﻿using System.Linq;
+
+namespace ILOS.Drivers.Storage
 {
     unsafe partial class ATA
     {
@@ -121,8 +123,9 @@
         /// <param name="size">Size in sectors</param>
         /// <param name="buffer">Output buffer</param>
         /// <returns></returns>
-        public static int readSector(uint lba, byte size, byte[] buffer)
+        public static int ReadSector(uint lba, byte size, byte[] buffer)
         {
+            // Does the drive exist?
             if (!device.Exists)
                 return 0;
 
@@ -164,6 +167,68 @@
         }
 
         /// <summary>
+        /// Write sector to drive and return size in bytes
+        /// </summary>
+        /// <param name="lba">Input LBA</param>
+        /// <param name="size">Output size in sectors</param>
+        /// <param name="buffer">Input buffer</param>
+        /// <returns></returns>
+        public static int WriteSector(uint lba, byte size, byte[] buffer)
+        {
+            // Does the drive exist?
+            if (!device.Exists)
+                return 0;
+            
+            uint @base = device.Base;
+            int drive = device.Drive;
+
+            int cmd = (drive == ATA_MASTER) ? 0xE0 : 0xF0;
+
+            // Set Drive
+            Portio.Out8((ushort)(@base + ATA_REG_DRIVE), (byte)(cmd | (byte)((lba >> 24) & 0x0F)));
+
+            // Set PIO MODE
+            Portio.Out8((ushort)(@base + ATA_REG_FEATURE), ATA_FEATURE_PIO);
+
+            // Set size
+            Portio.Out8((ushort)(@base + ATA_REG_SECCNT), size);
+
+            // Set LBA
+            Portio.Out8((ushort)(@base + ATA_REG_LBALO), (byte)lba);
+            Portio.Out8((ushort)(@base + ATA_REG_LBAMID), (byte)(lba >> 8));
+            Portio.Out8((ushort)(@base + ATA_REG_LBAHI), (byte)(lba >> 16));
+
+            // Issue command
+            Portio.Out8((ushort)(@base + ATA_REG_CMD), ATA_CMD_PIO_WRITE);
+
+            // Wait till done
+            ata_poll(@base);
+
+            // Wait for 400ns
+            Portio.In8((ushort)(@base + ATA_REG_STATUS));
+            Portio.In8((ushort)(@base + ATA_REG_STATUS));
+
+            // Write data
+            for (int i = 0; i < size * 256; i++)
+            {
+                int pos = i * 2;
+                ushort shrt = (ushort)(((buffer[pos + 1] & 0xFF) << 8) | (buffer[pos] & 0xFF));
+
+                Portio.Out16((ushort)(@base + ATA_REG_DATA), shrt);
+            }
+
+            // Flush data
+            Portio.Out8((ushort)(@base + ATA_REG_CMD), ATA_CMD_FLUSH);
+
+            // Wait till done
+            byte status = Portio.In8((ushort)(@base + ATA_REG_STATUS));
+            while((status & ATA_STATUS_BSY) > 0)
+                status = Portio.In8((ushort)(@base + ATA_REG_STATUS));
+
+            return size * 512;
+        }
+
+        /// <summary>
         /// IDE Prope
         /// </summary>
         private static void Probe()
@@ -185,6 +250,41 @@
             }
 
             device.Exists = true;
+
+            int pos = ATA_IDENT_COMMANDSETS;
+            device.cmdSet = (uint)(((0xFF & result[pos]) << 24) | ((0xFF & result[pos + 1]) << 16) | ((0xFF & result[pos + 2]) << 8) | (0xFF & result[pos + 3]));
+
+            pos = ATA_IDENT_DEVICETYPE;
+            device.type = (ushort)(((result[pos + 1] & 0xFF) << 8) | (result[pos] & 0xFF));
+
+            pos = ATA_IDENT_CAPABILITIES;
+            device.capabilities = (ushort)(((result[pos + 1] & 0xFF) << 8) | (result[pos] & 0xFF));
+
+            pos = ATA_IDENT_CYLINDERS;
+            device.cylinders = (ushort)(((result[pos + 1] & 0xFF) << 8) | (result[pos] & 0xFF));
+
+            pos = ATA_IDENT_HEADS;
+            device.heads = (ushort)(((result[pos + 1] & 0xFF) << 8) | (result[pos] & 0xFF));
+
+            pos = ATA_IDENT_SECTORSPT;
+            device.sectorspt = (ushort)(((result[pos + 1] & 0xFF) << 8) | (result[pos] & 0xFF));
+
+            pos = ATA_IDENT_MAX_LBA;
+            device.Size = (uint)(((0xFF & result[pos]) << 24) | ((0xFF & result[pos + 1]) << 16) | ((0xFF & result[pos + 2]) << 8) | (0xFF & result[pos + 3]));
+
+            /*
+            Cannot work:
+                Unimplemented opcode: IL_01d1: ldflda System.String ILOS.Drivers.Storage.IDE_DEVICE::name
+            // Model name
+            pos = ATA_IDENT_MODEL;
+            device.name = "";
+            for(int i = 0; i < 40; i += 2)
+            {
+                device.name += (char)result[pos + i + 1];
+                device.name += (char)result[pos + i];
+            }*/
+
+
         }
 
         /// <summary>
