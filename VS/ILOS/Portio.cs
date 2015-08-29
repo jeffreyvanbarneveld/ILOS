@@ -37,5 +37,19 @@ namespace ILOS
             Asm.Execute("in ax, dx", regs);
             return (ushort)regs.eax;
         }
+
+        public static void Out32(ushort port, uint value)
+        {
+            regs.eax = value;
+            regs.edx = port;
+            Asm.Execute("out dx, eax", regs);
+        }
+
+        public static uint In32(ushort port)
+        {
+            regs.edx = port;
+            Asm.Execute("in ax, dx", regs);
+            return regs.eax;
+        }
     }
 }

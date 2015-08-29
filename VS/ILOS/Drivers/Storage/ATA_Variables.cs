@@ -76,12 +76,10 @@ namespace ILOS.Drivers.Storage
         public ushort type;
         public ushort capabilities;
 
-        public byte support48;
-
         public ushort cylinders;
         public ushort heads;
         public ushort sectorspt;
 
-        public string name;
+        //public string name;
     }
 }
