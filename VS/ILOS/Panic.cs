@@ -27,7 +27,7 @@ namespace ILOS
             Console.CursorX = 20;
             Console.CursorY++;
 
-            Console.WriteLine("KERNEL PANIC\n");
+            Console.WriteLine("Red dead from hell\n");
             Console.CursorX = 20;
             Console.WriteLine("Message: " + message);
             Console.CursorX = 20;
