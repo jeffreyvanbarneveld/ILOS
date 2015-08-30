@@ -62,7 +62,6 @@ namespace ILOS.Drivers.Storage
             byte status = Portio.In8(@base + ATA_REG_STATUS);
             if (status == 0)
             {
-                Console.WriteLine("status==0");
                 return null;
             }
                 

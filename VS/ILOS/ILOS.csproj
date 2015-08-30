@@ -64,6 +64,8 @@
     <Compile Include="Drivers\Sound\PCSpeaker.cs" />
     <Compile Include="Drivers\Storage\ATA.cs" />
     <Compile Include="Drivers\Storage\ATA_Variables.cs" />
+    <Compile Include="Drivers\Storage\FDC.cs" />
+    <Compile Include="Drivers\Storage\FDC_Variables.cs" />
     <Compile Include="ilvm_methods\ILVM.cs" />
     <Compile Include="Panic.cs" />
     <Compile Include="Portio.cs" />
