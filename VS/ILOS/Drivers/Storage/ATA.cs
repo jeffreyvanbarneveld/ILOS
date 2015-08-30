@@ -51,25 +51,29 @@ namespace ILOS.Drivers.Storage
                 @base = ATA_SECONDARY_IO;
 
             // Set to first LBA
-            Portio.Out8((ushort)(@base + ATA_REG_SECCNT), 0x00);
-            Portio.Out8((ushort)(@base + ATA_REG_LBALO), 0x00);
-            Portio.Out8((ushort)(@base + ATA_REG_LBAMID), 0x00);
-            Portio.Out8((ushort)(@base + ATA_REG_LBAHI), 0x00);
+            Portio.Out8(@base + ATA_REG_SECCNT, 0x00);
+            Portio.Out8(@base + ATA_REG_LBALO, 0x00);
+            Portio.Out8(@base + ATA_REG_LBAMID, 0x00);
+            Portio.Out8(@base + ATA_REG_LBAHI, 0x00);
 
-            Portio.Out8((ushort)(@base + ATA_REG_CMD), ATA_CMD_IDENTIFY);
+            Portio.Out8(@base + ATA_REG_CMD, ATA_CMD_IDENTIFY);
 
             // Check if a drive is found
-            byte status = Portio.In8((ushort)(@base + ATA_REG_STATUS));
+            byte status = Portio.In8(@base + ATA_REG_STATUS);
             if (status == 0)
+            {
+                Console.WriteLine("status==0");
                 return null;
+            }
+                
 
             // Wait until drive is not busy anymore
             while ((status & ATA_STATUS_BSY) != 0)
-                status = Portio.In8((ushort)(@base + ATA_REG_STATUS));
+                status = Portio.In8(@base + ATA_REG_STATUS);
 
             while(true)
             {
-                status = Portio.In8((ushort)(@base + ATA_REG_STATUS));
+                status = Portio.In8(@base + ATA_REG_STATUS);
 
                 if ((status & ATA_STATUS_ERR) != 0)
                     return null;
@@ -82,7 +86,7 @@ namespace ILOS.Drivers.Storage
             byte[] ide_buf = new byte[256];
             for(int i = 0; i < 128; i++)
             {
-                ushort shrt = Portio.In16((ushort)(@base + ATA_REG_DATA));
+                ushort shrt = Portio.In16(@base + ATA_REG_DATA);
                 int offset = i * 2;
                 ide_buf[offset + 0] = (byte)((shrt >> 8) & 0xFF);
                 ide_buf[offset + 1] = (byte)((shrt) & 0xFF);
@@ -98,15 +102,15 @@ namespace ILOS.Drivers.Storage
         private static void ata_poll(uint @base)
         {
             for (int i = 0; i < 4; i++)
-                Portio.In8((ushort)(@base + ATA_REG_ALTSTATUS));
+                Portio.In8(@base + ATA_REG_ALTSTATUS);
 
-            byte status = Portio.In8((ushort)(@base + ATA_REG_STATUS));
+            byte status = Portio.In8(@base + ATA_REG_STATUS);
             while ((status & ATA_STATUS_BSY) > 0)
-                status = Portio.In8((ushort)(@base + ATA_REG_STATUS));
+                status = Portio.In8(@base + ATA_REG_STATUS);
             
             while((status & ATA_STATUS_DRQ) == 0)
             {
-                status = Portio.In8((ushort)(@base + ATA_REG_STATUS));
+                status = Portio.In8(@base + ATA_REG_STATUS);
 
                 if ((status & ATA_STATUS_DF) > 0)
                     Panic.Do("Device fault!");
@@ -135,21 +139,21 @@ namespace ILOS.Drivers.Storage
             int cmd = (drive == ATA_MASTER) ? 0xE0 : 0xF0;
 
             // Set Drive
-            Portio.Out8((ushort)(@base + ATA_REG_DRIVE), (byte)(cmd | (byte)((lba >> 24) & 0x0F)));
+            Portio.Out8(@base + ATA_REG_DRIVE, (byte)(cmd | (byte)((lba >> 24) & 0x0F)));
 
             // Set PIO MODE
-            Portio.Out8((ushort)(@base + ATA_REG_FEATURE), ATA_FEATURE_PIO);
+            Portio.Out8(@base + ATA_REG_FEATURE, ATA_FEATURE_PIO);
 
             // Set size
-            Portio.Out8((ushort)(@base + ATA_REG_SECCNT), size);
+            Portio.Out8(@base + ATA_REG_SECCNT, size);
 
             // Set LBA
-            Portio.Out8((ushort)(@base + ATA_REG_LBALO), (byte)lba);
-            Portio.Out8((ushort)(@base + ATA_REG_LBAMID), (byte)(lba >> 8));
-            Portio.Out8((ushort)(@base + ATA_REG_LBAHI), (byte)(lba >> 16));
+            Portio.Out8(@base + ATA_REG_LBALO, (byte)lba);
+            Portio.Out8(@base + ATA_REG_LBAMID, (byte)(lba >> 8));
+            Portio.Out8(@base + ATA_REG_LBAHI, (byte)(lba >> 16));
 
             // Issue command
-            Portio.Out8((ushort)(@base + ATA_REG_CMD), ATA_CMD_PIO_READ);
+            Portio.Out8(@base + ATA_REG_CMD, ATA_CMD_PIO_READ);
 
             // Wait till done
             ata_poll(@base);
@@ -157,7 +161,7 @@ namespace ILOS.Drivers.Storage
             // Read data
             for (int i = 0; i < size * 256; i++)
             {
-                ushort @in = Portio.In16((ushort)(@base + ATA_REG_DATA));
+                ushort @in = Portio.In16(@base + ATA_REG_DATA);
                 int pos = i * 2;
                 buffer[pos] = (byte)@in;
                 buffer[pos + 1] = (byte)(@in >> 8);
@@ -185,28 +189,28 @@ namespace ILOS.Drivers.Storage
             int cmd = (drive == ATA_MASTER) ? 0xE0 : 0xF0;
 
             // Set Drive
-            Portio.Out8((ushort)(@base + ATA_REG_DRIVE), (byte)(cmd | (byte)((lba >> 24) & 0x0F)));
+            Portio.Out8(@base + ATA_REG_DRIVE, (byte)(cmd | (byte)((lba >> 24) & 0x0F)));
 
             // Set PIO MODE
-            Portio.Out8((ushort)(@base + ATA_REG_FEATURE), ATA_FEATURE_PIO);
+            Portio.Out8(@base + ATA_REG_FEATURE, ATA_FEATURE_PIO);
 
             // Set size
-            Portio.Out8((ushort)(@base + ATA_REG_SECCNT), size);
+            Portio.Out8(@base + ATA_REG_SECCNT, size);
 
             // Set LBA
-            Portio.Out8((ushort)(@base + ATA_REG_LBALO), (byte)lba);
-            Portio.Out8((ushort)(@base + ATA_REG_LBAMID), (byte)(lba >> 8));
-            Portio.Out8((ushort)(@base + ATA_REG_LBAHI), (byte)(lba >> 16));
+            Portio.Out8(@base + ATA_REG_LBALO, (byte)lba);
+            Portio.Out8(@base + ATA_REG_LBAMID, (byte)(lba >> 8));
+            Portio.Out8(@base + ATA_REG_LBAHI, (byte)(lba >> 16));
 
             // Issue command
-            Portio.Out8((ushort)(@base + ATA_REG_CMD), ATA_CMD_PIO_WRITE);
+            Portio.Out8(@base + ATA_REG_CMD, ATA_CMD_PIO_WRITE);
 
             // Wait till done
             ata_poll(@base);
 
             // Wait for 400ns
-            Portio.In8((ushort)(@base + ATA_REG_STATUS));
-            Portio.In8((ushort)(@base + ATA_REG_STATUS));
+            Portio.In8(@base + ATA_REG_STATUS);
+            Portio.In8(@base + ATA_REG_STATUS);
 
             // Write data
             for (int i = 0; i < size * 256; i++)
@@ -214,16 +218,16 @@ namespace ILOS.Drivers.Storage
                 int pos = i * 2;
                 ushort shrt = (ushort)(((buffer[pos + 1] & 0xFF) << 8) | (buffer[pos] & 0xFF));
 
-                Portio.Out16((ushort)(@base + ATA_REG_DATA), shrt);
+                Portio.Out16(@base + ATA_REG_DATA, shrt);
             }
 
             // Flush data
             Portio.Out8((ushort)(@base + ATA_REG_CMD), ATA_CMD_FLUSH);
 
             // Wait till done
-            byte status = Portio.In8((ushort)(@base + ATA_REG_STATUS));
+            byte status = Portio.In8(@base + ATA_REG_STATUS);
             while((status & ATA_STATUS_BSY) > 0)
-                status = Portio.In8((ushort)(@base + ATA_REG_STATUS));
+                status = Portio.In8(@base + ATA_REG_STATUS);
 
             return size * 512;
         }

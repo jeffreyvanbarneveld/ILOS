@@ -6,12 +6,17 @@ namespace ILOS
     {
         private static Registers regs = default(Registers);
 
+        /* A bit of an explanation: */
+        /* Normally the port is a ushort and value for example a byte */
+        /* But when doing math in C#, it autocasts to int */
+        /* So we accept int in the arguments */
+
         /// <summary>
         /// Write 8-bit value to the given port
         /// </summary>
         /// <param name="port">The port</param>
         /// <param name="value">The value</param>
-        public static void Out8(ushort port, byte value)
+        public static void Out8(uint port, uint value)
         {
             regs.eax = value;
             regs.edx = port;
@@ -23,7 +28,7 @@ namespace ILOS
         /// </summary>
         /// <param name="port">The port</param>
         /// <returns>Value from the port</returns>
-        public static byte In8(ushort port)
+        public static byte In8(uint port)
         {
             regs.edx = port;
             Asm.Execute("in al, dx", regs);
@@ -35,7 +40,7 @@ namespace ILOS
         /// </summary>
         /// <param name="port">The port</param>
         /// <param name="value">The value</param>
-        public static void Out16(ushort port, ushort value)
+        public static void Out16(uint port, uint value)
         {
             regs.eax = value;
             regs.edx = port;
@@ -47,7 +52,7 @@ namespace ILOS
         /// </summary>
         /// <param name="port">The port</param>
         /// <returns>Value from the port</returns>
-        public static ushort In16(ushort port)
+        public static ushort In16(uint port)
         {
             regs.edx = port;
             Asm.Execute("in ax, dx", regs);
@@ -59,7 +64,7 @@ namespace ILOS
         /// </summary>
         /// <param name="port">The port</param>
         /// <param name="value">The value</param>
-        public static void Out32(ushort port, uint value)
+        public static void Out32(uint port, uint value)
         {
             regs.eax = value;
             regs.edx = port;
@@ -71,7 +76,7 @@ namespace ILOS
         /// </summary>
         /// <param name="port">The port</param>
         /// <returns>Value from the port</returns>
-        public static uint In32(ushort port)
+        public static uint In32(uint port)
         {
             regs.edx = port;
             Asm.Execute("in ax, dx", regs);
