@@ -152,7 +152,7 @@
                 if (tmp == 0 && noZeroes)
                     continue;
 
-                noZeroes = true;
+                noZeroes = false;
                 if (tmp >= 0x0A)
                     PutChar((char)(tmp - 0x0A + 'A'));
                 else

@@ -4,13 +4,11 @@ namespace ILOS.Drivers.Storage
 {
     unsafe partial class ATA
     {
-        const int ATA_PRIMARY_IO = 0x1F0;
-        const int ATA_SECONDARY_IO = 0x170;
 
-        private static IDE_DEVICE device = new IDE_DEVICE();
-        public static IDE_DEVICE FirstDevice
+        private static IDE_DEVICE[] devices = new IDE_DEVICE[4];
+        public static IDE_DEVICE[] Devices
         {
-            get { return device; }
+            get { return devices; }
         }
         
         /// <summary>
@@ -126,8 +124,15 @@ namespace ILOS.Drivers.Storage
         /// <param name="size">Size in sectors</param>
         /// <param name="buffer">Output buffer</param>
         /// <returns></returns>
-        public static int ReadSector(uint lba, byte size, byte[] buffer)
+        public static int ReadSector(uint device_num, uint lba, byte size, byte[] buffer)
         {
+            // The driver only supports up to 4 drivers
+            if (device_num > 3)
+                return 0;
+
+            // Get IDE device from array
+            IDE_DEVICE device = devices[device_num];
+
             // Does the drive exist?
             if (!device.Exists)
                 return 0;
@@ -176,8 +181,15 @@ namespace ILOS.Drivers.Storage
         /// <param name="size">Output size in sectors</param>
         /// <param name="buffer">Input buffer</param>
         /// <returns></returns>
-        public static int WriteSector(uint lba, byte size, byte[] buffer)
+        public static int WriteSector(uint device_num, uint lba, byte size, byte[] buffer)
         {
+            // The driver only supports up to 4 drivers
+            if (device_num > 3)
+                return 0;
+
+            // Get IDE device from array
+            IDE_DEVICE device = devices[device_num];
+
             // Does the drive exist?
             if (!device.Exists)
                 return 0;
@@ -236,52 +248,77 @@ namespace ILOS.Drivers.Storage
         /// </summary>
         private static void Probe()
         {
-            ushort @base = ATA_PRIMARY_IO;
-            byte channel = ATA_PRIMARY;
-            byte drive = ATA_PRIMARY;
+            int num = 0;
 
-            device.Base = @base;
-            device.Channel = channel;
-            device.Drive = drive;
-
-            byte[] result = identify(channel, drive);
-
-            if (result == null)
+            // Let's prope 4 devices!
+            while (num < 4)
             {
-                device.Exists = false;
-                return;
-            }
+                ushort @base;
+                byte channel;
+                byte drive;
 
-            device.Exists = true;
+                if (num <= 1)
+                {
+                    @base = ATA_PRIMARY_IO;
+                    channel = ATA_PRIMARY;
+                }
+                else
+                {
+                    @base = ATA_SECONDARY_IO;
+                    channel = ATA_SECONDARY;
+                }
 
-            int pos = ATA_IDENT_COMMANDSETS;
-            device.CmdSet = (uint)(((0xFF & result[pos]) << 24) | ((0xFF & result[pos + 1]) << 16) | ((0xFF & result[pos + 2]) << 8) | (0xFF & result[pos + 3]));
+                if ((num % 2) != 0)
+                    drive = ATA_SLAVE;
+                else
+                    drive = ATA_PRIMARY;
 
-            pos = ATA_IDENT_DEVICETYPE;
-            device.Type = (ushort)(((result[pos + 1] & 0xFF) << 8) | (result[pos] & 0xFF));
+                devices[num] = new IDE_DEVICE();
+                devices[num].Base = @base;
+                devices[num].Channel = channel;
+                devices[num].Drive = drive;
 
-            pos = ATA_IDENT_CAPABILITIES;
-            device.Capabilities = (ushort)(((result[pos + 1] & 0xFF) << 8) | (result[pos] & 0xFF));
+                byte[] result = identify(channel, drive);
 
-            pos = ATA_IDENT_CYLINDERS;
-            device.Cylinders = (ushort)(((result[pos + 1] & 0xFF) << 8) | (result[pos] & 0xFF));
+                if (result == null)
+                {
+                    devices[num].Exists = false;
+                    return;
+                }
 
-            pos = ATA_IDENT_HEADS;
-            device.Heads = (ushort)(((result[pos + 1] & 0xFF) << 8) | (result[pos] & 0xFF));
+                devices[num].Exists = true;
 
-            pos = ATA_IDENT_SECTORSPT;
-            device.Sectorspt = (ushort)(((result[pos + 1] & 0xFF) << 8) | (result[pos] & 0xFF));
+                int pos = ATA_IDENT_COMMANDSETS;
+                devices[num].CmdSet = (uint)(((0xFF & result[pos]) << 24) | ((0xFF & result[pos + 1]) << 16) | ((0xFF & result[pos + 2]) << 8) | (0xFF & result[pos + 3]));
 
-            pos = ATA_IDENT_MAX_LBA;
-            device.Size = (uint)(((0xFF & result[pos]) << 24) | ((0xFF & result[pos + 1]) << 16) | ((0xFF & result[pos + 2]) << 8) | (0xFF & result[pos + 3]));
+                pos = ATA_IDENT_DEVICETYPE;
+                devices[num].Type = (ushort)(((result[pos + 1] & 0xFF) << 8) | (result[pos] & 0xFF));
 
-            // Model name
-            pos = ATA_IDENT_MODEL;
-            device.Name = "";
-            for(int i = 0; i < 40; i += 2)
-            {
-                device.Name += ((char)result[pos + i]).ToString();
-                device.Name += ((char)result[pos + i + 1]).ToString();
+                pos = ATA_IDENT_CAPABILITIES;
+                devices[num].Capabilities = (ushort)(((result[pos + 1] & 0xFF) << 8) | (result[pos] & 0xFF));
+
+                pos = ATA_IDENT_CYLINDERS;
+                devices[num].Cylinders = (ushort)(((result[pos + 1] & 0xFF) << 8) | (result[pos] & 0xFF));
+
+                pos = ATA_IDENT_HEADS;
+                devices[num].Heads = (ushort)(((result[pos + 1] & 0xFF) << 8) | (result[pos] & 0xFF));
+
+                pos = ATA_IDENT_SECTORSPT;
+                devices[num].Sectorspt = (ushort)(((result[pos + 1] & 0xFF) << 8) | (result[pos] & 0xFF));
+
+                pos = ATA_IDENT_MAX_LBA;
+                devices[num].Size = (uint)(((0xFF & result[pos]) << 24) | ((0xFF & result[pos + 1]) << 16) | ((0xFF & result[pos + 2]) << 8) | (0xFF & result[pos + 3]));
+
+                // Model name
+                pos = ATA_IDENT_MODEL;
+                devices[num].Name = "";
+                for (int i = 0; i < 40; i += 2)
+                {
+                    devices[num].Name += ((char)result[pos + i]).ToString();
+                    devices[num].Name += ((char)result[pos + i + 1]).ToString();
+                }
+
+                num++;
             }
         }
 

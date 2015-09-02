@@ -8,6 +8,9 @@ namespace ILOS.Drivers.Storage
 {
     partial class ATA
     {
+        public const int ATA_PRIMARY_IO = 0x1F0;
+        public const int ATA_SECONDARY_IO = 0x170;
+
         public const byte ATA_PRIMARY = 0x00;
         public const byte ATA_SECONDARY = 0x01;
 
