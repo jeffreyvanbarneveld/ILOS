@@ -1,14 +1,23 @@
-﻿using System.Linq;
-
-namespace ILOS.Drivers.Storage
+﻿namespace ILOS.Drivers.Storage
 {
     unsafe partial class ATA
     {
-
-        private static IDE_DEVICE[] devices = new IDE_DEVICE[4];
-        public static IDE_DEVICE[] Devices
+        private static IDE_Device[] devices = new IDE_Device[4];
+        public static IDE_Device[] Devices
         {
             get { return devices; }
+        }
+
+        /// <summary>
+        /// Waits 400 ns on an ATA device
+        /// </summary>
+        /// <param name="@base">The base IO</param>
+        private static void wait400ns(uint @base)
+        {
+            Portio.In8(@base + ATA_REG_ALTSTATUS);
+            Portio.In8(@base + ATA_REG_ALTSTATUS);
+            Portio.In8(@base + ATA_REG_ALTSTATUS);
+            Portio.In8(@base + ATA_REG_ALTSTATUS);
         }
         
         /// <summary>
@@ -59,24 +68,18 @@ namespace ILOS.Drivers.Storage
             // Check if a drive is found
             byte status = Portio.In8(@base + ATA_REG_STATUS);
             if (status == 0)
-            {
                 return null;
-            }
-                
-
+            
             // Wait until drive is not busy anymore
             while ((status & ATA_STATUS_BSY) != 0)
                 status = Portio.In8(@base + ATA_REG_STATUS);
 
-            while(true)
+            while ((status & ATA_STATUS_DRQ) == 0)
             {
                 status = Portio.In8(@base + ATA_REG_STATUS);
 
                 if ((status & ATA_STATUS_ERR) != 0)
                     return null;
-
-                if ((status & ATA_STATUS_DRQ) != 0)
-                    break;
             }
 
             // Read data from ATA drive
@@ -98,8 +101,7 @@ namespace ILOS.Drivers.Storage
         /// <param name="@base">Base IO base</param>
         private static void ata_poll(uint @base)
         {
-            for (int i = 0; i < 4; i++)
-                Portio.In8(@base + ATA_REG_ALTSTATUS);
+            wait400ns(@base);
 
             byte status = Portio.In8(@base + ATA_REG_STATUS);
             while ((status & ATA_STATUS_BSY) > 0)
@@ -131,7 +133,7 @@ namespace ILOS.Drivers.Storage
                 return 0;
 
             // Get IDE device from array
-            IDE_DEVICE device = devices[device_num];
+            IDE_Device device = devices[device_num];
 
             // Does the drive exist?
             if (!device.Exists)
@@ -188,7 +190,7 @@ namespace ILOS.Drivers.Storage
                 return 0;
 
             // Get IDE device from array
-            IDE_DEVICE device = devices[device_num];
+            IDE_Device device = devices[device_num];
 
             // Does the drive exist?
             if (!device.Exists)
@@ -220,8 +222,7 @@ namespace ILOS.Drivers.Storage
             ata_poll(@base);
 
             // Wait for 400ns
-            Portio.In8(@base + ATA_REG_STATUS);
-            Portio.In8(@base + ATA_REG_STATUS);
+            wait400ns(@base);
 
             // Write data
             for (int i = 0; i < size * 256; i++)
@@ -256,7 +257,7 @@ namespace ILOS.Drivers.Storage
                 ushort @base;
                 byte channel;
                 byte drive;
-
+                
                 if (num <= 1)
                 {
                     @base = ATA_PRIMARY_IO;
@@ -273,7 +274,8 @@ namespace ILOS.Drivers.Storage
                 else
                     drive = ATA_PRIMARY;
 
-                devices[num] = new IDE_DEVICE();
+                devices[num] = new IDE_Device();
+
                 devices[num].Base = @base;
                 devices[num].Channel = channel;
                 devices[num].Drive = drive;
@@ -283,7 +285,8 @@ namespace ILOS.Drivers.Storage
                 if (result == null)
                 {
                     devices[num].Exists = false;
-                    return;
+                    num++;
+                    continue;
                 }
 
                 devices[num].Exists = true;
@@ -317,7 +320,7 @@ namespace ILOS.Drivers.Storage
                     devices[num].Name += ((char)result[pos + i]).ToString();
                     devices[num].Name += ((char)result[pos + i + 1]).ToString();
                 }
-
+                
                 num++;
             }
         }

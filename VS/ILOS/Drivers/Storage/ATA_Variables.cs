@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ILOS.Drivers.Storage
+﻿namespace ILOS.Drivers.Storage
 {
     partial class ATA
     {
@@ -34,8 +28,7 @@ namespace ILOS.Drivers.Storage
         public const byte ATA_REG_CONTROL = 0x0C;
         public const byte ATA_REG_ALTSTATUS = 0x0C;
         public const byte ATA_REG_DEVADDRESS = 0x0D;
-
-
+        
         public const byte ATA_CMD_IDENTIFY = 0xEC;
         public const byte ATA_CMD_PIO_READ = 0x20;
         public const byte ATA_CMD_PIO_WRITE = 0x30;
@@ -64,25 +57,5 @@ namespace ILOS.Drivers.Storage
         public const byte ATA_IDENT_MAX_LBA = 0x78;
         public const byte ATA_IDENT_COMMANDSETS = 0xA4;
         public const byte ATA_IDENT_MAX_LBA_EXT = 0xC8;
-    }
-
-    struct IDE_DEVICE
-    {
-        public bool Exists;
-        public byte Channel;
-
-        public ushort Base;
-        public byte Drive;
-        public ulong Size;
-
-        public uint CmdSet;
-        public ushort Type;
-        public ushort Capabilities;
-
-        public ushort Cylinders;
-        public ushort Heads;
-        public ushort Sectorspt;
-
-        public string Name;
     }
 }

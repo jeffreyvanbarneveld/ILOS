@@ -13,8 +13,9 @@
 **/
 void _Exit(int status)
 {
-    printf("_Exit(%d)\n", status);
-    for(;;);
+    printf("Exit with status %d\n", status);
+    while(1)
+        asm volatile("hlt");
 }
 
 /**
@@ -43,7 +44,7 @@ void kmain(multiboot_t* multiboot, uint32_t magic)
     /* Get module and info about it */
     multiboot_module_t* module = (multiboot_module_t*) multiboot->mods_addr;
     uintptr_t start = module->mod_start;
-    uintptr_t end   = module->mod_end;
+    uintptr_t end = module->mod_end;
 
     /* Install heap after module */
     heap_install(end);

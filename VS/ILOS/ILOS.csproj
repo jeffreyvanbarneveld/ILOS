@@ -66,6 +66,7 @@
     <Compile Include="Drivers\Storage\ATA_Variables.cs" />
     <Compile Include="Drivers\Storage\FDC.cs" />
     <Compile Include="Drivers\Storage\FDC_Variables.cs" />
+    <Compile Include="Drivers\Storage\IDE_Device.cs" />
     <Compile Include="ilvm_methods\ILVM.cs" />
     <Compile Include="Panic.cs" />
     <Compile Include="Portio.cs" />
