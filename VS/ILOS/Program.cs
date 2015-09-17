@@ -14,7 +14,7 @@ namespace ILOS
             Console.WriteLine(":" + RTC.Minutes);
             Console.WriteLine("Looking for disks.");
             ATA.Init();
-            
+
             foreach(IDE_Device device in ATA.Devices)
             {
                 if (device.Exists)

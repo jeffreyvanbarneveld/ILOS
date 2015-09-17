@@ -21,7 +21,7 @@ void System_String__ctor2()
 
     /* String ends on a NULL and push string on stack */
     str[i] = '\0';
-    stack_push_str(str);
+    stack_push_obj(str);
 }
 
 void System_String_FastAllocateString1()
@@ -29,15 +29,15 @@ void System_String_FastAllocateString1()
     /* String.FastAllocateString(int length) */
     int32_t length = stack_pop_int32();
     char* str = malloc(CHAR_SIZE * (1 + length));
-    stack_push_str(str);
+    stack_push_obj(str);
 }
 
 void System_String_FillStringChecked3()
 {
     /* String.FillStringChecked(string dest, int destPos, string src) */
-    char* src = stack_pop_str();
+    char* src = stack_pop_obj();
     int32_t destPos = stack_pop_int32();
-    char* dest = stack_pop_str();
+    char* dest = stack_pop_obj();
     if(src == NULL)
         return;
 
@@ -46,14 +46,14 @@ void System_String_FillStringChecked3()
 
 void System_String_get_Length0()
 {
-    char *str = stack_pop_str();
+    char *str = stack_pop_obj();
     stack_push_int32(strlen(str));
 }
 
 void System_String_get_Chars1()
 {
     int32_t index = stack_pop_int32();
-    char *str = stack_pop_str();
+    char *str = stack_pop_obj();
     stack_push_int32(str[index]);
 }
 
@@ -75,7 +75,7 @@ void System_Number_FormatInt323()
     /* Number.FormatInt32(value, format, numberFormatInfo) */
     /* Format and numberformatinfo are currently ignored */
     void* numberFormatInfo = stack_pop_obj();
-    char* format = stack_pop_str();
+    char* format = stack_pop_obj();
     int32_t value = stack_pop_int32();
 
     /* Disable warnings of unused variables */
@@ -87,7 +87,7 @@ void System_Number_FormatInt323()
     char* str = malloc(CHAR_SMALL_SIZE * (1 + 11));
     sprintf(str, "%d", value);
 
-    stack_push_str(str);
+    stack_push_obj(str);
 }
 
 void System_Object_ToString0()
@@ -95,38 +95,29 @@ void System_Object_ToString0()
     /* Object.ToString() */
     /* On stack: object */
     uint8_t type = stack_peek_type();
-    if(type == TYPE_STRING)
-    {
-        /* Keep as-is */
-    }
-    else if(type == TYPE_OBJ)
-    {
-        stack_pop_obj();
-        stack_push_str("OBJECT");
-    }
-    else if(type == TYPE_INT32)
+    if(type == TYPE_INT32)
     {
         char* str = malloc(CHAR_SMALL_SIZE * (1 + 11));
         sprintf(str, "%d", stack_pop_int32());
-        stack_push_str(str);
+        stack_push_obj(str);
     }
     else if(type == TYPE_INT64)
     {
         char* str = malloc(CHAR_SMALL_SIZE * (1 + 20));
         sprintf(str, "%ld", stack_pop_int64());
-        stack_push_str(str);
+        stack_push_obj(str);
     }
     else if(type == TYPE_FLOAT)
     {
         char* str = malloc(CHAR_SMALL_SIZE * (1 + 18));
         sprintf(str, "%g", stack_pop_float());
-        stack_push_str(str);
+        stack_push_obj(str);
     }
     else if(type == TYPE_DOUBLE)
     {
         char* str = malloc(CHAR_SMALL_SIZE * (1 + 18));
         sprintf(str, "%g", stack_pop_double());
-        stack_push_str(str);
+        stack_push_obj(str);
     }
 }
 

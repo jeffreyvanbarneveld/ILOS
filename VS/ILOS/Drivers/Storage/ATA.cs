@@ -49,14 +49,14 @@
         {
             // Select correct drive
             select_drive(channel, drive);
-
+            
             // Select base port for ATA drive
             uint @base;
             if (channel == ATA_PRIMARY)
                 @base = ATA_PRIMARY_IO;
             else
                 @base = ATA_SECONDARY_IO;
-
+            
             // Set to first LBA
             Portio.Out8(@base + ATA_REG_SECCNT, 0x00);
             Portio.Out8(@base + ATA_REG_LBALO, 0x00);
@@ -64,32 +64,37 @@
             Portio.Out8(@base + ATA_REG_LBAHI, 0x00);
 
             Portio.Out8(@base + ATA_REG_CMD, ATA_CMD_IDENTIFY);
-
+            
             // Check if a drive is found
             byte status = Portio.In8(@base + ATA_REG_STATUS);
             if (status == 0)
                 return null;
-            
+
             // Wait until drive is not busy anymore
+            status = Portio.In8(@base + ATA_REG_STATUS);
             while ((status & ATA_STATUS_BSY) != 0)
                 status = Portio.In8(@base + ATA_REG_STATUS);
-
-            while ((status & ATA_STATUS_DRQ) == 0)
+            
+            while (true)
             {
                 status = Portio.In8(@base + ATA_REG_STATUS);
 
                 if ((status & ATA_STATUS_ERR) != 0)
                     return null;
+                
+                if ((status & ATA_STATUS_DRQ) != 0)
+                    break;
             }
-
+            
             // Read data from ATA drive
             byte[] ide_buf = new byte[256];
+            int offset = 0;
             for(int i = 0; i < 128; i++)
             {
                 ushort shrt = Portio.In16(@base + ATA_REG_DATA);
-                int offset = i * 2;
-                ide_buf[offset + 0] = (byte)((shrt >> 8) & 0xFF);
-                ide_buf[offset + 1] = (byte)((shrt) & 0xFF);
+                ide_buf[offset + 0] = (byte)(shrt >> 8);
+                ide_buf[offset + 1] = (byte)(shrt);
+                offset += 2;
             }
 
             return ide_buf;
@@ -128,7 +133,7 @@
         /// <returns></returns>
         public static int ReadSector(uint device_num, uint lba, byte size, byte[] buffer)
         {
-            // The driver only supports up to 4 drivers
+            // The driver only supports up to 4 drives
             if (device_num > 3)
                 return 0;
 
@@ -165,12 +170,13 @@
             ata_poll(@base);
 
             // Read data
+            int offset = 0;
             for (int i = 0; i < size * 256; i++)
             {
                 ushort @in = Portio.In16(@base + ATA_REG_DATA);
-                int pos = i * 2;
-                buffer[pos] = (byte)@in;
-                buffer[pos + 1] = (byte)(@in >> 8);
+                buffer[offset + 0] = (byte)(@in);
+                buffer[offset + 1] = (byte)(@in >> 8);
+                offset += 2;
             }
 
             return size * 512;
@@ -292,35 +298,35 @@
                 devices[num].Exists = true;
 
                 int pos = ATA_IDENT_COMMANDSETS;
-                devices[num].CmdSet = (uint)(((0xFF & result[pos]) << 24) | ((0xFF & result[pos + 1]) << 16) | ((0xFF & result[pos + 2]) << 8) | (0xFF & result[pos + 3]));
+                devices[num].CmdSet = (uint)((result[pos] << 24) | (result[pos + 1] << 16) | (result[pos + 2] << 8) | result[pos + 3]);
 
                 pos = ATA_IDENT_DEVICETYPE;
-                devices[num].Type = (ushort)(((result[pos + 1] & 0xFF) << 8) | (result[pos] & 0xFF));
+                devices[num].Type = (ushort)((result[pos + 1] << 8) | result[pos]);
 
                 pos = ATA_IDENT_CAPABILITIES;
-                devices[num].Capabilities = (ushort)(((result[pos + 1] & 0xFF) << 8) | (result[pos] & 0xFF));
+                devices[num].Capabilities = (ushort)((result[pos + 1] << 8) | result[pos]);
 
                 pos = ATA_IDENT_CYLINDERS;
-                devices[num].Cylinders = (ushort)(((result[pos + 1] & 0xFF) << 8) | (result[pos] & 0xFF));
+                devices[num].Cylinders = (ushort)((result[pos + 1] << 8) | result[pos]);
 
                 pos = ATA_IDENT_HEADS;
-                devices[num].Heads = (ushort)(((result[pos + 1] & 0xFF) << 8) | (result[pos] & 0xFF));
+                devices[num].Heads = (ushort)((result[pos + 1] << 8) | result[pos]);
 
                 pos = ATA_IDENT_SECTORSPT;
-                devices[num].Sectorspt = (ushort)(((result[pos + 1] & 0xFF) << 8) | (result[pos] & 0xFF));
+                devices[num].Sectorspt = (ushort)((result[pos + 1] << 8) | result[pos]);
 
                 pos = ATA_IDENT_MAX_LBA;
-                devices[num].Size = (uint)(((0xFF & result[pos]) << 24) | ((0xFF & result[pos + 1]) << 16) | ((0xFF & result[pos + 2]) << 8) | (0xFF & result[pos + 3]));
+                devices[num].Size = (uint)(((result[pos] << 24) | (result[pos + 1] << 16) | (result[pos + 2] << 8) | result[pos + 3]));
 
                 // Model name
                 pos = ATA_IDENT_MODEL;
                 devices[num].Name = "";
                 for (int i = 0; i < 40; i += 2)
                 {
-                    devices[num].Name += ((char)result[pos + i]).ToString();
+                    devices[num].Name += ((char)result[pos + i + 0]).ToString();
                     devices[num].Name += ((char)result[pos + i + 1]).ToString();
                 }
-                
+
                 num++;
             }
         }
