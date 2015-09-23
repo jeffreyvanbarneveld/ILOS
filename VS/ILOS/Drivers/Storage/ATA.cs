@@ -234,7 +234,7 @@
             for (int i = 0; i < size * 256; i++)
             {
                 int pos = i * 2;
-                ushort shrt = (ushort)(((buffer[pos + 1] & 0xFF) << 8) | (buffer[pos] & 0xFF));
+                ushort shrt = (ushort)((buffer[pos + 1] << 8) | buffer[pos]);
 
                 Portio.Out16(@base + ATA_REG_DATA, shrt);
             }
@@ -337,6 +337,32 @@
         public static void Init()
         {
             Probe();
+        }
+
+        /// <summary>
+        /// Contains test code for ATA
+        /// </summary>
+        public static void Test()
+        {
+            Console.WriteLine("Reading 3 bytes of sector on IDE_PRIMARY_MASTER");
+
+            byte[] buf = new byte[512];
+            ATA.ReadSector(0, 0, 1, buf);
+
+            Console.Write("Value: 0x");
+            Console.WriteHex(buf[100]);
+            Console.WriteHex(buf[510]);
+            Console.WriteHex(buf[511]);
+            Console.Write("\n");
+
+            Console.WriteLine("Reading 3 bytes of sector on IDE_SECONDARY_MASTER");
+
+            ATA.ReadSector(2, 0, 1, buf);
+
+            Console.Write("Value: 0x");
+            Console.WriteHex(buf[100]);
+            Console.WriteHex(buf[510]);
+            Console.WriteHex(buf[511]);
         }
     }
 }

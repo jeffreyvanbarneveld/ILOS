@@ -22,25 +22,10 @@ namespace ILOS
                 }
             }
 
-            Console.WriteLine("Reading 3 bytes of sector on IDE_PRIMARY_MASTER");
+            ATA.Test();
 
-            byte[] buf = new byte[512];
-            ATA.ReadSector(0, 0, 1, buf);
-
-            Console.Write("Value: 0x");
-            Console.WriteHex(buf[100]);
-            Console.WriteHex(buf[510]);
-            Console.WriteHex(buf[511]);
-            Console.Write("\n");
-
-            Console.WriteLine("Reading 3 bytes of sector on IDE_SECONDARY_MASTER");
-            
-            ATA.ReadSector(2, 0, 1, buf);
-
-            Console.Write("Value: 0x");
-            Console.WriteHex(buf[100]);
-            Console.WriteHex(buf[510]);
-            Console.WriteHex(buf[511]);
+            Console.WriteLine("");
+            Console.WriteHex(0x12345678DEADBEEF);
         }
     }
 }

@@ -12,7 +12,7 @@ void System_String__ctor2()
     /* On stack: repetitions, character */
     int32_t repetitions = stack_pop_int32();
     char character = (char) stack_pop_int32();
-    char* str = malloc(sizeof(char) * (1 + repetitions));
+    char* str = malloc(CHAR_SIZE * (1 + repetitions));
 
     /* Create string */
     int i = 0;
@@ -29,6 +29,7 @@ void System_String_FastAllocateString1()
     /* String.FastAllocateString(int length) */
     int32_t length = stack_pop_int32();
     char* str = malloc(CHAR_SIZE * (1 + length));
+    memset(str, 0, CHAR_SIZE * (1 + length));
     stack_push_obj(str);
 }
 
@@ -94,7 +95,7 @@ void System_Object_ToString0()
 {
     /* Object.ToString() */
     /* On stack: object */
-    uint8_t type = stack_peek_type();
+    uint8_t type = STACK_PEEK_TYPE();
     if(type == TYPE_INT32)
     {
         char* str = malloc(CHAR_SMALL_SIZE * (1 + 11));
@@ -104,7 +105,7 @@ void System_Object_ToString0()
     else if(type == TYPE_INT64)
     {
         char* str = malloc(CHAR_SMALL_SIZE * (1 + 20));
-        sprintf(str, "%ld", stack_pop_int64());
+        sprintf(str, "%lld", stack_pop_int64());
         stack_push_obj(str);
     }
     else if(type == TYPE_FLOAT)

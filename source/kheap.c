@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <kheap.h>
-#include <memory.h>
 #include <string.h>
 
 /* Info */
@@ -13,7 +12,6 @@ uintptr_t heap_start;
 /**
  * 
  * Allocate memory from the heap
- * 
  * @param  size
  * @return pointer to allocated memory
  *
@@ -48,7 +46,7 @@ void *malloc(size_t size)
             if(block->size == 0)
                 block->size = size;
 
-            return (void *)(heap_start + offset);
+            return (void*) (heap_start + offset);
         }
 
         /* Next block */
@@ -67,7 +65,7 @@ void *malloc(size_t size)
  * @param ptr pointer to allocated memory
  *
 **/
-void free(void* ptr) 
+void free(void *ptr) 
 {
     /* Invalid pointer? */
     if (ptr == NULL)

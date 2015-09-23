@@ -12,8 +12,8 @@ OBJ_FILES 	+= $(patsubst %.c,%.o, $(C_FILES))
 OBJ_FILES_BUILD := $(patsubst source/%.o,$(BUILD_DIR)%.o, $(OBJ_FILES))
 
 # compile flags
-C_FLAGS		:=  -I./include -std=gnu99 -masm=intel -m32 -Wall -O -fno-stack-protector -finline-functions -fno-builtin
-L_FLAGS		:= -m elf_i386
+C_FLAGS		:= -I./include -std=gnu99 -masm=intel -m32 -Wall -O -pedantic -nostdlib
+L_FLAGS		:= -m elf_i386 -s
 A_FLAGS		:= -f elf32
 
 ifeq ($(OS),Windows_NT)
@@ -36,7 +36,10 @@ else
    endif
 endif
 
-all: startMsg kernel.elf clean	
+# find libgcc
+LIBGCC		:= $(shell $(GCC) -print-libgcc-file-name)
+
+all: startMsg kernel.elf clean
 	@echo Finished compiling kernel
 
 startMsg:
@@ -52,7 +55,7 @@ sync:
 	
 kernel.elf: $(OBJ_FILES) 
 	@echo Linking kernel...
-	@$(Linker) -T link.ld $(L_FLAGS) -o build/kernel.bin $(OBJ_FILES_BUILD)
+	@$(Linker) -T link.ld $(L_FLAGS) -o build/kernel.bin $(OBJ_FILES_BUILD) $(LIBGCC)
 	@$(CP) build/kernel.bin V:\
 
 clean:

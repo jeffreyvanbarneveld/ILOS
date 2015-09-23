@@ -5,12 +5,7 @@ namespace ILOS
     class Portio
     {
         private static Registers regs = default(Registers);
-
-        /* A bit of an explanation: */
-        /* Normally the port is a ushort and value for example a byte */
-        /* But when doing math in C#, it autocasts to int */
-        /* So we accept int in the arguments */
-
+        
         /// <summary>
         /// Write 8-bit value to the given port
         /// </summary>

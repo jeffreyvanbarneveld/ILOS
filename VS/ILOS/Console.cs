@@ -66,6 +66,7 @@
 
             cursor_x = 0;
             cursor_y = 0;
+            MoveVGACursor();
         }
         
         /// <summary>
@@ -132,12 +133,12 @@
         }
 
         /// <summary>
-        /// Writes a hexadecimal number to the screen
+        /// Writes a hexadecimal integer to the screen
         /// </summary>
-        /// <param name="integer">The number.</param>
-        public static void WriteHex(int integer)
+        /// <param name="num">The number.</param>
+        public static void WriteHex(int num)
         {
-            if(integer == 0)
+            if(num == 0)
             {
                 PutChar('0');
                 return;
@@ -145,10 +146,37 @@
 
             // Don't print zeroes at beginning of number
             bool noZeroes = true;
-
             for(int j = 28; j >= 0; j -= 4)
             {
-                int tmp = (integer >> j) & 0x0F;
+                int tmp = (num >> j) & 0x0F;
+                if (tmp == 0 && noZeroes)
+                    continue;
+
+                noZeroes = false;
+                if (tmp >= 0x0A)
+                    PutChar((char)(tmp - 0x0A + 'A'));
+                else
+                    PutChar((char)(tmp + '0'));
+            }
+        }
+
+        /// <summary>
+        /// Writes a hexadecimal long to the screen
+        /// </summary>
+        /// <param name="num">The number.</param>
+        public static void WriteHex(long num)
+        {
+            if (num == 0)
+            {
+                PutChar('0');
+                return;
+            }
+
+            // Don't print zeroes at beginning of number
+            bool noZeroes = true;
+            for (int j = 60; j >= 0; j -= 4)
+            {
+                long tmp = (num >> j) & 0x0F;
                 if (tmp == 0 && noZeroes)
                     continue;
 
