@@ -3,7 +3,7 @@
 #include <multiboot.h>
 #include <kheap.h>
 #include <stdio.h>
-#include <runtime.h>
+#include <vm.h>
 
 /**
  *
@@ -14,8 +14,9 @@
 void _Exit(int status)
 {
     printf("Exit with status %d\n", status);
+    __asm__ __volatile__("cli");
     while(1)
-        asm volatile("hlt");
+        __asm__ __volatile__("hlt");
 }
 
 /**

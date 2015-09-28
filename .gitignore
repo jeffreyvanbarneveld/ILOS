@@ -1,10 +1,8 @@
 tools
-build/*.o
+*.o
 build/*.bin
 *.dll
-include/stack.h
-include/runtime.h
-include/ops.h
-include/binarystructs.h
-source/runtime.c
-source/stack.c
+include/vm
+source/vm/stack.c
+source/vm/vm.c
+source/vm/runtime/system_*.c

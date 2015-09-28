@@ -1,13 +1,10 @@
 #ifndef __STDINT_H
 #define __STDINT_H
 
+/* Size type */
 typedef unsigned long size_t;
-//
-// Integer types
-//
 
-#ifndef _INT_T_DEFINED
-#define _INT_T_DEFINED
+/* Integer types */
 typedef signed char int8_t;
 typedef short int16_t;
 typedef int int32_t;
@@ -17,32 +14,16 @@ typedef unsigned char uint8_t;
 typedef unsigned short uint16_t;
 typedef unsigned int uint32_t;
 typedef unsigned long long uint64_t;
-#endif
 
-//
-// Types for void * pointers
-//
-
-#ifndef _INTPTR_T_DEFINED
-#define _INTPTR_T_DEFINED
+/* Types for pointers */
 typedef long intptr_t;
 typedef unsigned long uintptr_t;
-#endif
 
-//
-// Largest integral types
-//
+/* Types for largest integers */
+typedef long long intmax_t;
+typedef unsigned long long uintmax_t;
 
-#ifndef _INTMAX_T_DEFINED
-#define _INTMAX_T_DEFINED
-typedef long intmax_t;
-typedef unsigned long uintmax_t;
-#endif
-
-//
-// Limits of integral types
-//
-
+/* Minimum & maximum */
 #define INT8_MIN     (-128)
 #define INT16_MIN    (-32767 - 1)
 #define INT32_MIN    (-2147483647 - 1)
