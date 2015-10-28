@@ -287,7 +287,7 @@
                 devices[num].Drive = drive;
 
                 byte[] result = identify(channel, drive);
-
+                
                 if (result == null)
                 {
                     devices[num].Exists = false;
@@ -326,6 +326,7 @@
                     devices[num].Name += ((char)result[pos + i + 0]).ToString();
                     devices[num].Name += ((char)result[pos + i + 1]).ToString();
                 }
+
 
                 num++;
             }

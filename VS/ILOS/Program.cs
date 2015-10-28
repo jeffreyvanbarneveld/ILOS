@@ -1,4 +1,5 @@
 ﻿using ILOS.Drivers.Char;
+using ILOS.Drivers.Power;
 using ILOS.Drivers.Storage;
 
 namespace ILOS
@@ -22,10 +23,7 @@ namespace ILOS
                 }
             }
 
-            ATA.Test();
-
-            Console.WriteLine("");
-            Console.WriteHex(0x12345678DEADBEEF);
+            Acpi.find();
         }
     }
 }
