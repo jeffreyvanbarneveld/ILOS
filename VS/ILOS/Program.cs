@@ -23,7 +23,9 @@ namespace ILOS
                 }
             }
 
-            Acpi.find();
+            Keyboard.LedEnable(KbLeds.NumberLock);
+            Keyboard.LedEnable(KbLeds.CapsLock);
+            Keyboard.LedDisable(KbLeds.CapsLock);
         }
     }
 }
